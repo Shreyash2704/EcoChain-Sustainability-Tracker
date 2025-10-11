@@ -1,0 +1,112 @@
+# ==============================
+# 🌐 client (React)
+# ==============================
+
+# Node modules
+client/node_modules/
+node_modules
+
+# Build outputs
+client/build/
+client/.parcel-cache/
+client/.next/
+client/out/
+
+# Environment files
+client/.env
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
+
+# Logs
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+client/pnpm-debug.log*
+
+# IDE / Editor files
+client/.vscode/
+client/.idea/
+client/.DS_Store
+client/*.swp
+
+# Misc
+client/dist/
+client/tmp/
+client/.eslintcache
+
+
+# ==============================
+# 🐍 BACKEND (Python / FastAPI / uAgents)
+# ==============================
+
+# Python cache
+backend/__pycache__/
+backend/**/*.pyc
+backend/**/*.pyo
+backend/**/*.pyd
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+backend/venv/
+venv/
+.env/
+
+# Logs & temp files
+backend/*.log
+backend/*.pid
+backend/tmp/
+backend/.mypy_cache/
+backend/.pytest_cache/
+backend/.ruff_cache/
+
+# Environment/config files
+backend/.env
+backend/config.json
+backend/secrets.json
+
+# Build / packaging
+backend/build/
+backend/dist/
+backend/*.egg-info/
+backend/.eggs/
+
+# Bytecode and coverage
+*.coverage
+.coverage.*
+htmlcov/
+.cache/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+Thumbs.db
+
+
+# ==============================
+# 🧠 COMMON
+# ==============================
+
+# Logs
+*.log
+
+# Backup files
+*.bak
+*.tmp
+*.swp
+
+# Ignore test artifacts
+__snapshot__/
+test-results/
+
+# Local data
+*.sqlite3
+*.db
+uploads/
