@@ -4,6 +4,7 @@ from typing import Dict, Any, Optional
 import json
 import asyncio
 from datetime import datetime
+import base64
 
 # Create the verifier agent
 verifier_agent = Agent(
@@ -82,14 +83,47 @@ async def handle_file_upload_request(ctx: Context, sender: str, msg: ChatMessage
             "completed_at": datetime.utcnow().isoformat()
         })
         
-        # Send response back to sender
+        # Send data to reasoner agent for analysis
+        try:
+            from agents.reasoner_agent import reasoner_agent
+            
+            # Prepare data for reasoner agent
+            reasoner_data = {
+                "upload_id": upload_id,
+                "cid": mock_cid,
+                "gateway_url": f"https://gateway.lighthouse.storage/ipfs/{mock_cid}",
+                "document_content": file_data,  # Base64 encoded file data
+                "user_wallet": upload_data.get("user_wallet"),
+                "document_type": upload_data.get("upload_type"),
+                "filename": filename,
+                "content_type": content_type,
+                "metadata": upload_data.get("metadata"),
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+            reasoner_message = ChatMessage(
+                content=[TextContent(
+                    text=json.dumps(reasoner_data)
+                )]
+            )
+            
+            # Send to reasoner agent
+            await ctx.send(reasoner_agent.address, reasoner_message)
+            print(f"📤 Sent data to reasoner agent for analysis: {upload_id}")
+            
+        except ImportError as e:
+            print(f"⚠️ Could not import reasoner agent: {e}")
+        except Exception as e:
+            print(f"❌ Error sending to reasoner agent: {e}")
+        
+        # Send response back to original sender (API)
         response_data = {
             "upload_id": upload_id,
             "status": "completed",
             "cid": mock_cid,
             "gateway_url": f"https://gateway.lighthouse.storage/ipfs/{mock_cid}",
             "filename": filename,
-            "message": "File uploaded successfully to IPFS"
+            "message": "File uploaded successfully to IPFS and sent for analysis"
         }
         
         response = ChatMessage(
@@ -99,7 +133,7 @@ async def handle_file_upload_request(ctx: Context, sender: str, msg: ChatMessage
         )
         await ctx.send(sender, response)
         
-        print(f"File upload {upload_id} completed with CID: {mock_cid}")
+        print(f"✅ File upload {upload_id} completed with CID: {mock_cid}")
         
     except json.JSONDecodeError as e:
         error_response = ChatMessage(

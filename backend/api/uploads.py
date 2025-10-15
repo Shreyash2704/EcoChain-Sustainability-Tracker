@@ -100,34 +100,80 @@ async def upload_file(
             )]
         )
         
-        # Send message to verifier agent
-        # Note: In uAgents, we need to use the Bureau to send messages between agents
-        # For now, we'll simulate the agent processing
-        logger.info(f"Simulating agent processing for upload: {upload_id}")
+        # For now, simulate the verifier agent processing directly
+        # In a real implementation, this would send to the verifier agent via Bureau
+        logger.info(f"Processing upload via verifier agent simulation: {upload_id}")
         
-        # Simulate processing delay
-        import asyncio
-        await asyncio.sleep(1)
+        # Simulate verifier agent processing
+        await asyncio.sleep(1)  # Simulate processing time
         
-        # Update upload status to completed with mock CID
+        # Generate mock CID
         mock_cid = f"QmMock{upload_id.replace('-', '')[:40]}"
+        
+        # Update upload status
         upload_sessions[upload_id].update({
             "status": "completed",
             "cid": mock_cid,
             "gateway_url": f"https://gateway.lighthouse.storage/ipfs/{mock_cid}",
             "completed_at": datetime.utcnow().isoformat()
         })
-        logger.info(f"File upload request sent to verifier agent: {upload_id}")
         
-        return {
+        # Simulate sending to reasoner agent
+        try:
+            # Import reasoner agent functions directly
+            from agents.reasoner_agent import analyze_document_and_calculate_credits
+            
+            # Decode document content
+            try:
+                decoded_content = base64.b64decode(file_data_b64).decode('utf-8')
+            except:
+                decoded_content = file_data_b64
+            
+            # Run reasoner analysis
+            logger.info(f"Running reasoner analysis for upload: {upload_id}")
+            analysis_result = await analyze_document_and_calculate_credits(
+                document_content=decoded_content,
+                document_type=upload_type,
+                metadata=metadata,
+                user_wallet=user_wallet
+            )
+            
+            # Update upload with analysis results
+            upload_sessions[upload_id].update({
+                "analysis_result": analysis_result,
+                "should_mint": analysis_result['should_mint'],
+                "token_amount": analysis_result['token_amount'],
+                "reasoning": analysis_result['reasoning']
+            })
+            
+            logger.info(f"Reasoner analysis completed: {analysis_result['should_mint']} - {analysis_result['token_amount']} tokens")
+            
+        except Exception as e:
+            logger.error(f"Error in reasoner analysis: {e}")
+            # Continue without analysis results
+        
+        # Prepare response
+        response = {
             "upload_id": upload_id,
             "status": "completed",
-            "message": "File uploaded successfully and processed",
+            "message": "File uploaded successfully and analyzed",
             "filename": file.filename,
             "upload_type": upload_type,
             "cid": mock_cid,
             "gateway_url": f"https://gateway.lighthouse.storage/ipfs/{mock_cid}"
         }
+        
+        # Add analysis results if available
+        if "analysis_result" in upload_sessions[upload_id]:
+            analysis = upload_sessions[upload_id]["analysis_result"]
+            response.update({
+                "should_mint": analysis['should_mint'],
+                "token_amount": analysis['token_amount'],
+                "reasoning": analysis['reasoning'],
+                "impact_score": analysis['impact_score']
+            })
+        
+        return response
         
     except Exception as e:
         logger.error(f"Upload failed: {str(e)}")
