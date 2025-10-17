@@ -27,17 +27,71 @@ class Web3Service:
     
     def _load_contract_abis(self):
         """Load contract ABIs from files or environment"""
-        # Carbon Credit NFT Contract ABI
-        self.contracts['carbon_credit_nft'] = {
+        # EcoCreditToken Contract ABI
+        self.contracts['eco_credit_token'] = {
+            'abi': [
+                {
+                    "inputs": [
+                        {"internalType": "address", "name": "to", "type": "address"},
+                        {"internalType": "uint256", "name": "amount", "type": "uint256"}
+                    ],
+                    "name": "mint",
+                    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {"internalType": "address", "name": "account", "type": "address"}
+                    ],
+                    "name": "balanceOf",
+                    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "totalSupply",
+                    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "name",
+                    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "symbol",
+                    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "decimals",
+                    "outputs": [{"internalType": "uint8", "name": "", "type": "uint8"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ],
+            'address': os.getenv('ECO_CREDIT_TOKEN_ADDRESS', '0x6adB8BB5BB5Df5aB3596fc63dbAd51b092dee08f')
+        }
+        
+        # SustainabilityProof NFT Contract ABI
+        self.contracts['sustainability_proof'] = {
             'abi': [
                 {
                     "inputs": [
                         {"internalType": "address", "name": "to", "type": "address"},
                         {"internalType": "string", "name": "tokenURI", "type": "string"},
-                        {"internalType": "uint256", "name": "carbonAmount", "type": "uint256"},
-                        {"internalType": "string", "name": "proofType", "type": "string"}
+                        {"internalType": "string", "name": "proofType", "type": "string"},
+                        {"internalType": "uint256", "name": "carbonAmount", "type": "uint256"}
                     ],
-                    "name": "mintCarbonCredit",
+                    "name": "mintSustainabilityProof",
                     "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
                     "stateMutability": "nonpayable",
                     "type": "function"
@@ -51,15 +105,15 @@ class Web3Service:
                 },
                 {
                     "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
-                    "name": "getCarbonAmount",
-                    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                    "name": "getProofType",
+                    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
                     "stateMutability": "view",
                     "type": "function"
                 },
                 {
                     "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
-                    "name": "getProofType",
-                    "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+                    "name": "getCarbonAmount",
+                    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
                     "stateMutability": "view",
                     "type": "function"
                 },
@@ -81,10 +135,10 @@ class Web3Service:
                     "type": "function"
                 }
             ],
-            'address': os.getenv('CARBON_CREDIT_NFT_ADDRESS', '0x0000000000000000000000000000000000000000')
+            'address': os.getenv('SUSTAINABILITY_PROOF_ADDRESS', '0x17874E9d6e22bf8025Fe7473684e50f36472CCd2')
         }
         
-        # Sustainability Proof Registry ABI
+        # ProofRegistry Contract ABI
         self.contracts['proof_registry'] = {
             'abi': [
                 {
@@ -124,7 +178,7 @@ class Web3Service:
                     "type": "function"
                 }
             ],
-            'address': os.getenv('PROOF_REGISTRY_ADDRESS', '0x0000000000000000000000000000000000000000')
+            'address': os.getenv('PROOF_REGISTRY_ADDRESS', '0xc3f19798eC4aB47734209f99cAF63B6Fd9a04081')
         }
     
     def get_contract(self, contract_name: str):
@@ -141,21 +195,17 @@ class Web3Service:
             abi=contract_info['abi']
         )
     
-    async def mint_carbon_credit_nft(
+    async def mint_eco_credit_tokens(
         self, 
         to_address: str, 
-        token_uri: str, 
-        carbon_amount: int, 
-        proof_type: str
+        amount: int
     ) -> Dict[str, Any]:
         """
-        Mint a carbon credit NFT
+        Mint EcoCredit tokens to a user
         
         Args:
             to_address: Recipient address
-            token_uri: IPFS URI for token metadata
-            carbon_amount: Amount of carbon credits (in wei)
-            proof_type: Type of sustainability proof
+            amount: Amount of tokens to mint (in wei)
             
         Returns:
             Dict containing transaction details
@@ -167,14 +217,75 @@ class Web3Service:
                     detail="No account configured for minting"
                 )
             
-            contract = self.get_contract('carbon_credit_nft')
+            contract = self.get_contract('eco_credit_token')
             
             # Build transaction
-            transaction = contract.functions.mintCarbonCredit(
+            transaction = contract.functions.mint(
+                to_address,
+                amount
+            ).build_transaction({
+                'from': self.account.address,
+                'gas': 200000,
+                'gasPrice': self.w3.eth.gas_price,
+                'nonce': self.w3.eth.get_transaction_count(self.account.address)
+            })
+            
+            # Sign and send transaction
+            signed_txn = self.w3.eth.account.sign_transaction(transaction, self.private_key)
+            tx_hash = self.w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            
+            # Wait for transaction receipt
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+            
+            return {
+                "tx_hash": tx_hash.hex(),
+                "block_number": receipt.blockNumber,
+                "gas_used": receipt.gasUsed,
+                "status": "success" if receipt.status == 1 else "failed",
+                "to_address": to_address,
+                "amount": amount
+            }
+            
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Token minting failed: {str(e)}"
+            )
+    
+    async def mint_sustainability_proof_nft(
+        self, 
+        to_address: str, 
+        token_uri: str, 
+        proof_type: str,
+        carbon_amount: int
+    ) -> Dict[str, Any]:
+        """
+        Mint a sustainability proof NFT
+        
+        Args:
+            to_address: Recipient address
+            token_uri: IPFS URI for token metadata
+            proof_type: Type of sustainability proof
+            carbon_amount: Amount of carbon credits (in wei)
+            
+        Returns:
+            Dict containing transaction details
+        """
+        try:
+            if not self.account:
+                raise HTTPException(
+                    status_code=500,
+                    detail="No account configured for minting"
+                )
+            
+            contract = self.get_contract('sustainability_proof')
+            
+            # Build transaction
+            transaction = contract.functions.mintSustainabilityProof(
                 to_address,
                 token_uri,
-                carbon_amount,
-                proof_type
+                proof_type,
+                carbon_amount
             ).build_transaction({
                 'from': self.account.address,
                 'gas': 300000,
@@ -214,7 +325,7 @@ class Web3Service:
         except Exception as e:
             raise HTTPException(
                 status_code=500,
-                detail=f"Minting failed: {str(e)}"
+                detail=f"NFT minting failed: {str(e)}"
             )
     
     async def register_sustainability_proof(
@@ -338,7 +449,7 @@ class Web3Service:
     
     async def get_user_nfts(self, user_address: str) -> List[Dict[str, Any]]:
         """
-        Get all carbon credit NFTs owned by a user
+        Get all sustainability proof NFTs owned by a user
         
         Args:
             user_address: User's wallet address
@@ -347,7 +458,7 @@ class Web3Service:
             List of NFT information
         """
         try:
-            contract = self.get_contract('carbon_credit_nft')
+            contract = self.get_contract('sustainability_proof')
             
             # Get balance
             balance = contract.functions.balanceOf(user_address).call()
@@ -373,6 +484,42 @@ class Web3Service:
             raise HTTPException(
                 status_code=500,
                 detail=f"Failed to get user NFTs: {str(e)}"
+            )
+    
+    async def get_user_token_balance(self, user_address: str) -> Dict[str, Any]:
+        """
+        Get user's EcoCredit token balance
+        
+        Args:
+            user_address: User's wallet address
+            
+        Returns:
+            Dict containing token balance information
+        """
+        try:
+            contract = self.get_contract('eco_credit_token')
+            
+            balance = contract.functions.balanceOf(user_address).call()
+            total_supply = contract.functions.totalSupply().call()
+            name = contract.functions.name().call()
+            symbol = contract.functions.symbol().call()
+            decimals = contract.functions.decimals().call()
+            
+            return {
+                "user_address": user_address,
+                "balance": balance,
+                "balance_formatted": balance / (10 ** decimals),
+                "total_supply": total_supply,
+                "total_supply_formatted": total_supply / (10 ** decimals),
+                "token_name": name,
+                "token_symbol": symbol,
+                "decimals": decimals
+            }
+            
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to get token balance: {str(e)}"
             )
     
     async def get_proof_details(self, proof_id: str) -> Dict[str, Any]:

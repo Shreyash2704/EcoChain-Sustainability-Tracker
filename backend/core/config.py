@@ -28,12 +28,32 @@ class Settings(BaseSettings):
     ethereum_rpc_url: Optional[str] = Field(default=None, env="ETHEREUM_RPC_URL")
     polygon_rpc_url: Optional[str] = Field(default=None, env="POLYGON_RPC_URL")
     arbitrum_rpc_url: Optional[str] = Field(default=None, env="ARBITRUM_RPC_URL")
+    sepolia_rpc_url: Optional[str] = Field(default=None, env="SEPOLIA_RPC_URL")
+    
+    # Web3 Configuration
+    private_key: Optional[str] = Field(default=None, env="PRIVATE_KEY")
+    wallet_address: Optional[str] = Field(default=None, env="WALLET_ADDRESS")
+    agent_address: Optional[str] = Field(default=None, env="AGENT_ADDRESS")
+    
+    # Contract Addresses
+    eco_credit_token_address: Optional[str] = Field(default=None, env="ECO_CREDIT_TOKEN_ADDRESS")
+    sustainability_proof_address: Optional[str] = Field(default=None, env="SUSTAINABILITY_PROOF_ADDRESS")
+    proof_registry_address: Optional[str] = Field(default=None, env="PROOF_REGISTRY_ADDRESS")
+    
+    # Token Configuration
+    initial_supply: str = Field(default="10000000000000000000000000", env="INITIAL_SUPPLY")
+    max_supply: str = Field(default="1000000000000000000000000000", env="MAX_SUPPLY")
+    base_token_uri: str = Field(default="https://gateway.lighthouse.storage/ipfs/", env="BASE_TOKEN_URI")
     
     # API Keys
     privy_app_id: Optional[str] = Field(default=None, env="PRIVY_APP_ID")
     privy_app_secret: Optional[str] = Field(default=None, env="PRIVY_APP_SECRET")
     lighthouse_api_key: Optional[str] = Field(default=None, env="LIGHTHOUSE_API_KEY")
     metta_api_key: Optional[str] = Field(default=None, env="METTA_API_KEY")
+    
+    # MeTTa Configuration
+    metta_path: str = Field(default="metta", env="METTA_PATH")
+    metta_wrapper_url: Optional[str] = Field(default=None, env="METTA_WRAPPER_URL")
     
     # Database Configuration
     database_url: Optional[str] = Field(default=None, env="DATABASE_URL")
