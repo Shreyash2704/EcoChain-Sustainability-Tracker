@@ -1,0 +1,13 @@
+{
+  "network": "sepolia",
+  "chainId": "11155111",
+  "deployer": "0xc90E6B2dD249C97D4408270a8bfD04d383A7c663",
+  "agent": "0xc90E6B2dD249C97D4408270a8bfD04d383A7c663",
+  "contracts": {
+    "EcoCreditToken": "0x6adB8BB5BB5Df5aB3596fc63dbAd51b092dee08f",
+    "SustainabilityProof": "0x17874E9d6e22bf8025Fe7473684e50f36472CCd2",
+    "ProofRegistry": "0xc3f19798eC4aB47734209f99cAF63B6Fd9a04081"
+  },
+  "timestamp": "2025-10-17T10:45:35.619Z",
+  "blockNumber": 9430595
+}
