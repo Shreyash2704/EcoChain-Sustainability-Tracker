@@ -241,6 +241,11 @@ class Web3Service:
                 print(f"⚠️ Gas estimation failed: {e}")
                 gas_limit = 300000  # Use higher default
             
+            # Get current gas price and add buffer for faster confirmation
+            current_gas_price = self.w3.eth.gas_price
+            # Increase gas price by 20% to avoid "replacement transaction underpriced" error
+            gas_price = int(current_gas_price * 1.2)
+            
             # Build transaction
             transaction = contract.functions.mint(
                 to_address,
@@ -249,7 +254,7 @@ class Web3Service:
             ).build_transaction({
                 'from': self.account.address,
                 'gas': gas_limit,
-                'gasPrice': self.w3.eth.gas_price,
+                'gasPrice': gas_price,
                 'nonce': self.w3.eth.get_transaction_count(self.account.address)
             })
             
@@ -257,8 +262,10 @@ class Web3Service:
             signed_txn = self.w3.eth.account.sign_transaction(transaction, self.private_key)
             tx_hash = self.w3.eth.send_raw_transaction(signed_txn.raw_transaction)
             
-            # Wait for transaction receipt
-            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+            print(f"⛽ Transaction sent with gas price: {gas_price} wei ({gas_price / 1e9:.2f} Gwei)")
+            
+            # Wait for transaction receipt with longer timeout
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)  # 5 minutes
             
             return {
                 "tx_hash": tx_hash.hex(),
@@ -316,6 +323,11 @@ class Web3Service:
                 print(f"⚠️ Gas estimation failed: {e}")
                 gas_limit = 400000  # Use higher default for NFT minting
             
+            # Get current gas price and add buffer for faster confirmation
+            current_gas_price = self.w3.eth.gas_price
+            # Increase gas price by 20% to avoid "replacement transaction underpriced" error
+            gas_price = int(current_gas_price * 1.2)
+            
             # Build transaction
             transaction = contract.functions.mintSustainabilityProof(
                 to_address,
@@ -325,7 +337,7 @@ class Web3Service:
             ).build_transaction({
                 'from': self.account.address,
                 'gas': gas_limit,
-                'gasPrice': self.w3.eth.gas_price,
+                'gasPrice': gas_price,
                 'nonce': self.w3.eth.get_transaction_count(self.account.address)
             })
             
@@ -333,8 +345,10 @@ class Web3Service:
             signed_txn = self.w3.eth.account.sign_transaction(transaction, self.private_key)
             tx_hash = self.w3.eth.send_raw_transaction(signed_txn.raw_transaction)
             
-            # Wait for transaction receipt
-            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+            print(f"⛽ NFT Transaction sent with gas price: {gas_price} wei ({gas_price / 1e9:.2f} Gwei)")
+            
+            # Wait for transaction receipt with longer timeout
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)  # 5 minutes
             
             # Get token ID from event logs
             token_id = None

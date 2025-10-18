@@ -111,7 +111,8 @@ async def handle_minting_request(ctx: Context, sender: str, msg: ChatMessage):
                 "tx_hash": token_result['tx_hash'],
                 "amount": token_amount,
                 "amount_wei": token_amount_wei,
-                "block_number": token_result['block_number']
+                "block_number": token_result['block_number'],
+                "gas_used": token_result.get('gas_used', 0)
             }
             print(f"✅ ECO tokens minted successfully: {token_result['tx_hash']}")
             
@@ -119,7 +120,8 @@ async def handle_minting_request(ctx: Context, sender: str, msg: ChatMessage):
             print(f"❌ ECO token minting failed: {e}")
             minting_results['eco_tokens'] = {
                 "success": False,
-                "error": str(e)
+                "error": str(e),
+                "retry_recommended": "gas_price" in str(e).lower() or "timeout" in str(e).lower() or "underpriced" in str(e).lower()
             }
         
         # 2. Mint SustainabilityProof NFT
@@ -145,7 +147,8 @@ async def handle_minting_request(ctx: Context, sender: str, msg: ChatMessage):
                 "proof_type": document_type,
                 "carbon_amount": carbon_footprint,
                 "metadata_uri": metadata_uri,
-                "block_number": nft_result['block_number']
+                "block_number": nft_result['block_number'],
+                "gas_used": nft_result.get('gas_used', 0)
             }
             print(f"✅ SustainabilityProof NFT minted: Token ID #{nft_result['token_id']}")
             
@@ -153,7 +156,8 @@ async def handle_minting_request(ctx: Context, sender: str, msg: ChatMessage):
             print(f"❌ NFT minting failed: {e}")
             minting_results['sustainability_nft'] = {
                 "success": False,
-                "error": str(e)
+                "error": str(e),
+                "retry_recommended": "gas_price" in str(e).lower() or "timeout" in str(e).lower() or "underpriced" in str(e).lower()
             }
         
         # 3. Register proof in ProofRegistry
@@ -209,6 +213,16 @@ async def handle_minting_request(ctx: Context, sender: str, msg: ChatMessage):
         print(f"🎨 NFT: {'✅' if minting_results.get('sustainability_nft', {}).get('success') else '❌'}")
         print(f"📝 Registry: {'✅' if minting_results.get('proof_registry', {}).get('success') else '❌'}")
         print(f"🏁 Overall Success: {'✅' if response_data['summary']['total_success'] else '❌'}")
+        
+        # Show retry recommendations if any failures occurred
+        failed_operations = []
+        for operation, result in minting_results.items():
+            if not result.get('success', False) and result.get('retry_recommended', False):
+                failed_operations.append(operation)
+        
+        if failed_operations:
+            print(f"🔄 Retry recommended for: {', '.join(failed_operations)}")
+            print(f"💡 Consider increasing gas price or waiting for network congestion to clear")
         
         response = ChatMessage(
             content=[TextContent(text=json.dumps(response_data))]

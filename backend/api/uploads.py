@@ -40,13 +40,18 @@ def load_upload_sessions():
     return {}
 
 def save_upload_sessions():
-    """Save upload sessions to JSON file with atomic write"""
+    """Save upload sessions to JSON file with atomic write (Windows compatible)"""
     ensure_data_directory()
+    temp_file = None
     try:
         # Use atomic write to prevent corruption
-        temp_file = tempfile.NamedTemporaryFile(mode='w', delete=False, encoding='utf-8')
+        temp_file = tempfile.NamedTemporaryFile(mode='w', delete=False, encoding='utf-8', dir=DATA_DIR)
         json.dump(upload_sessions, temp_file, indent=2, ensure_ascii=False, default=str)
         temp_file.close()
+        
+        # Windows-compatible atomic move
+        if os.path.exists(UPLOADS_FILE):
+            os.remove(UPLOADS_FILE)
         
         # Atomic move
         os.rename(temp_file.name, UPLOADS_FILE)
@@ -54,8 +59,11 @@ def save_upload_sessions():
     except Exception as e:
         logger.error(f"⚠️ Failed to save upload sessions: {e}")
         # Clean up temp file if it exists
-        if os.path.exists(temp_file.name):
-            os.unlink(temp_file.name)
+        if temp_file and os.path.exists(temp_file.name):
+            try:
+                os.unlink(temp_file.name)
+            except:
+                pass
 
 def backup_upload_sessions():
     """Create timestamped backup of upload sessions"""
