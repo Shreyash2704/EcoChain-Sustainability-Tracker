@@ -622,11 +622,11 @@ def initialize_web3_service(rpc_url: str, private_key: str = None):
     global web3_service
     web3_service = Web3Service(rpc_url, private_key)
 
-def get_web3_service() -> Web3Service:
+def get_web3_service() -> Optional[Web3Service]:
     """Get the global Web3 service instance"""
-    if web3_service is None:
-        raise HTTPException(
-            status_code=500,
-            detail="Web3 service not initialized"
-        )
+    # if web3_service is None:
+    #     raise HTTPException(
+    #         status_code=500,
+    #         detail="Web3 service not initialized"
+    #     )
     return web3_service

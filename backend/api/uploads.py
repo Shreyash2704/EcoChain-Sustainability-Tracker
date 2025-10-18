@@ -6,6 +6,7 @@ import os
 import base64
 import json
 import asyncio
+import tempfile
 from uagents import Bureau
 from uagents_core.contrib.protocols.chat import ChatMessage, TextContent
 
@@ -18,8 +19,86 @@ from core.logging import get_logger
 router = APIRouter(prefix="/upload", tags=["uploads"])
 logger = get_logger(__name__)
 
-# Mock database for demonstration
-upload_sessions = {}
+# Data file paths
+DATA_DIR = "data"
+UPLOADS_FILE = os.path.join(DATA_DIR, "uploads.json")
+
+def ensure_data_directory():
+    """Create data directory if it doesn't exist"""
+    os.makedirs(DATA_DIR, exist_ok=True)
+
+def load_upload_sessions():
+    """Load upload sessions from JSON file"""
+    ensure_data_directory()
+    if os.path.exists(UPLOADS_FILE):
+        try:
+            with open(UPLOADS_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError) as e:
+            logger.warning(f"Failed to load upload sessions: {e}")
+            return {}
+    return {}
+
+def save_upload_sessions():
+    """Save upload sessions to JSON file with atomic write"""
+    ensure_data_directory()
+    try:
+        # Use atomic write to prevent corruption
+        temp_file = tempfile.NamedTemporaryFile(mode='w', delete=False, encoding='utf-8')
+        json.dump(upload_sessions, temp_file, indent=2, ensure_ascii=False, default=str)
+        temp_file.close()
+        
+        # Atomic move
+        os.rename(temp_file.name, UPLOADS_FILE)
+        logger.info(f"✅ Upload sessions saved to {UPLOADS_FILE}")
+    except Exception as e:
+        logger.error(f"⚠️ Failed to save upload sessions: {e}")
+        # Clean up temp file if it exists
+        if os.path.exists(temp_file.name):
+            os.unlink(temp_file.name)
+
+def backup_upload_sessions():
+    """Create timestamped backup of upload sessions"""
+    if not upload_sessions:
+        return
+    
+    ensure_data_directory()
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_file = os.path.join(DATA_DIR, f"uploads_backup_{timestamp}.json")
+    
+    try:
+        with open(backup_file, 'w', encoding='utf-8') as f:
+            json.dump(upload_sessions, f, indent=2, ensure_ascii=False, default=str)
+        logger.info(f"✅ Backup created: {backup_file}")
+    except Exception as e:
+        logger.error(f"⚠️ Backup failed: {e}")
+
+def recover_from_backup():
+    """Recover data from latest backup if main file is corrupted"""
+    ensure_data_directory()
+    
+    # Find latest backup
+    try:
+        backup_files = [f for f in os.listdir(DATA_DIR) if f.startswith("uploads_backup_")]
+        if not backup_files:
+            return False
+        
+        latest_backup = sorted(backup_files)[-1]
+        backup_path = os.path.join(DATA_DIR, latest_backup)
+        
+        with open(backup_path, 'r', encoding='utf-8') as f:
+            global upload_sessions
+            upload_sessions = json.load(f)
+        save_upload_sessions()  # Restore to main file
+        logger.info(f"✅ Recovered from backup: {latest_backup}")
+        return True
+    except Exception as e:
+        logger.error(f"⚠️ Recovery failed: {e}")
+        return False
+
+# Load upload sessions from file on startup
+upload_sessions = load_upload_sessions()
+logger.info(f"📁 Loaded {len(upload_sessions)} upload sessions from file")
 
 # Store for agent communication
 bureau_instance: Optional[Bureau] = None
@@ -122,6 +201,9 @@ async def upload_file(
             "file_size": len(file_content)
         }
         
+        # Save to file
+        save_upload_sessions()
+        
         # Prepare upload data for verifier agent
         upload_data = {
             "upload_id": upload_id,
@@ -158,6 +240,9 @@ async def upload_file(
             "completed_at": datetime.utcnow().isoformat()
         })
         
+        # Save to file
+        save_upload_sessions()
+        
         # Simulate sending to reasoner agent
         try:
             # Import reasoner agent functions directly
@@ -185,6 +270,9 @@ async def upload_file(
                 "token_amount": analysis_result['token_amount'],
                 "reasoning": analysis_result['reasoning']
             })
+            
+            # Save to file
+            save_upload_sessions()
             
             logger.info(f"Reasoner analysis completed: {analysis_result['should_mint']} - {analysis_result['token_amount']} tokens")
             
@@ -236,6 +324,9 @@ async def upload_file(
                                 "proof_registry_tx": minting_data.get("results", {}).get("proof_registry", {}).get("tx_hash"),
                                 "proof_id": minting_data.get("results", {}).get("proof_registry", {}).get("proof_id")
                             }
+                            
+                            # Save to file
+                            save_upload_sessions()
                         except Exception as e:
                             logger.error(f"Error parsing minting response: {e}")
                     
@@ -396,8 +487,73 @@ async def delete_upload(upload_id: str):
     
     del upload_sessions[upload_id]
     
+    # Save to file
+    save_upload_sessions()
+    
     return {
         "upload_id": upload_id,
         "status": "deleted",
         "message": "Upload deleted successfully"
     }
+
+@router.post("/data/backup")
+async def create_data_backup():
+    """
+    Create a backup of all upload sessions
+    """
+    try:
+        backup_upload_sessions()
+        return {
+            "status": "success",
+            "message": "Data backup created successfully",
+            "backup_count": len([f for f in os.listdir(DATA_DIR) if f.startswith("uploads_backup_")])
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Backup failed: {str(e)}")
+
+@router.post("/data/recover")
+async def recover_data():
+    """
+    Recover data from latest backup
+    """
+    try:
+        success = recover_from_backup()
+        if success:
+            return {
+                "status": "success",
+                "message": "Data recovered from backup successfully",
+                "upload_count": len(upload_sessions)
+            }
+        else:
+            return {
+                "status": "failed",
+                "message": "No backup found or recovery failed"
+            }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Recovery failed: {str(e)}")
+
+@router.get("/data/stats")
+async def get_data_stats():
+    """
+    Get data storage statistics
+    """
+    try:
+        ensure_data_directory()
+        
+        # Count backup files
+        backup_files = [f for f in os.listdir(DATA_DIR) if f.startswith("uploads_backup_")]
+        
+        # Get file sizes
+        main_file_size = os.path.getsize(UPLOADS_FILE) if os.path.exists(UPLOADS_FILE) else 0
+        
+        return {
+            "upload_sessions_count": len(upload_sessions),
+            "main_file_size_bytes": main_file_size,
+            "main_file_size_mb": round(main_file_size / (1024 * 1024), 2),
+            "backup_files_count": len(backup_files),
+            "data_directory": DATA_DIR,
+            "main_file_path": UPLOADS_FILE,
+            "last_modified": datetime.fromtimestamp(os.path.getmtime(UPLOADS_FILE)).isoformat() if os.path.exists(UPLOADS_FILE) else None
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get data stats: {str(e)}")

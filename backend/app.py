@@ -13,6 +13,7 @@ import asyncio
 
 # Import API routers
 from api.uploads import router as uploads_router
+from api.analytics import router as analytics_router
 
 # Import core configuration and services
 from core.config import settings, is_development
@@ -37,6 +38,7 @@ app.add_middleware(
 
 # Include API routers
 app.include_router(uploads_router)
+app.include_router(analytics_router)
 
 @app.get("/")
 async def root():

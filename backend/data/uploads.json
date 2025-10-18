@@ -1,0 +1,13 @@
+{
+  "98fca45c-9c8c-4147-9e52-78cc7a496330": {
+    "upload_id": "98fca45c-9c8c-4147-9e52-78cc7a496330",
+    "filename": "test_data.json",
+    "content_type": "application/json",
+    "upload_type": "sustainability_document",
+    "user_wallet": "0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD",
+    "metadata": "string",
+    "status": "processing",
+    "created_at": "2025-10-18T15:29:25.763565",
+    "file_size": 702
+  }
+}
