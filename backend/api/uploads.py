@@ -159,6 +159,11 @@ async def initialize_bureau():
         asyncio.create_task(bureau_instance.run_async())
         logger.info("Bureau initialized with all agents")
 
+@router.options("/")
+async def upload_options():
+    """Handle CORS preflight requests for upload endpoint"""
+    return {"message": "CORS preflight"}
+
 @router.post("/")
 async def upload_file(
     file: UploadFile = File(...),
@@ -369,31 +374,42 @@ async def upload_file(
         # Add transaction details if minting was successful
         if "transaction_details" in upload_sessions[upload_id]:
             tx_details = upload_sessions[upload_id]["transaction_details"]
+            
+            # Helper function to ensure tx_hash has 0x prefix
+            def ensure_0x_prefix(tx_hash):
+                if not tx_hash or tx_hash == "0x0000000000000000000000000000000000000000000000000000000000000000":
+                    return tx_hash
+                return tx_hash if tx_hash.startswith('0x') else f"0x{tx_hash}"
+            
+            eco_tx = ensure_0x_prefix(tx_details.get("eco_token_tx"))
+            nft_tx = ensure_0x_prefix(tx_details.get("nft_tx"))
+            proof_tx = ensure_0x_prefix(tx_details.get("proof_registry_tx"))
+            
             response.update({
                 "blockchain_transactions": {
                     "eco_token_minting": {
-                        "tx_hash": tx_details.get("eco_token_tx"),
-                        "explorer_url": f"https://sepolia.etherscan.io/tx/{tx_details.get('eco_token_tx')}" if tx_details.get("eco_token_tx") else None,
+                        "tx_hash": eco_tx,
+                        "explorer_url": f"https://eth-sepolia.blockscout.com/tx/{eco_tx}" if eco_tx and eco_tx != "0x0000000000000000000000000000000000000000000000000000000000000000" else None,
                         "amount": analysis.get('token_amount', 0) if "analysis_result" in upload_sessions[upload_id] else 0
                     },
                     "nft_minting": {
-                        "tx_hash": tx_details.get("nft_tx"),
+                        "tx_hash": nft_tx,
                         "token_id": tx_details.get("nft_token_id"),
-                        "explorer_url": f"https://sepolia.etherscan.io/tx/{tx_details.get('nft_tx')}" if tx_details.get("nft_tx") else None,
+                        "explorer_url": f"https://eth-sepolia.blockscout.com/tx/{nft_tx}" if nft_tx and nft_tx != "0x0000000000000000000000000000000000000000000000000000000000000000" else None,
                         "nft_contract": "0x17874E9d6e22bf8025Fe7473684e50f36472CCd2"
                     },
                     "proof_registration": {
-                        "tx_hash": tx_details.get("proof_registry_tx"),
+                        "tx_hash": proof_tx,
                         "proof_id": tx_details.get("proof_id"),
-                        "explorer_url": f"https://sepolia.etherscan.io/tx/{tx_details.get('proof_registry_tx')}" if tx_details.get("proof_registry_tx") else None,
+                        "explorer_url": f"https://eth-sepolia.blockscout.com/tx/{proof_tx}" if proof_tx and proof_tx != "0x0000000000000000000000000000000000000000000000000000000000000000" else None,
                         "registry_contract": "0xc3f19798eC4aB47734209f99cAF63B6Fd9a04081"
                     }
                 },
                 "wallet_info": {
                     "user_wallet": user_wallet,
-                    "wallet_explorer": f"https://sepolia.etherscan.io/address/{user_wallet}",
-                    "eco_token_balance": f"https://sepolia.etherscan.io/token/0x6adB8BB5BB5Df5aB3596fc63dbAd51b092dee08f?a={user_wallet}",
-                    "nft_collection": f"https://sepolia.etherscan.io/token/0x17874E9d6e22bf8025Fe7473684e50f36472CCd2?a={user_wallet}"
+                    "wallet_explorer": f"https://eth-sepolia.blockscout.com/address/{user_wallet}",
+                    "eco_token_balance": f"https://eth-sepolia.blockscout.com/token/0x6adB8BB5BB5Df5aB3596fc63dbAd51b092dee08f?a={user_wallet}",
+                    "nft_collection": f"https://eth-sepolia.blockscout.com/token/0x17874E9d6e22bf8025Fe7473684e50f36472CCd2?a={user_wallet}"
                 }
             })
         

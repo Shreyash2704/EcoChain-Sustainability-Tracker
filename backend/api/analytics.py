@@ -75,8 +75,8 @@ async def get_user_analytics(user_wallet: str):
                     "eco_token_tx": tx_details.get("eco_token_tx"),
                     "nft_tx": tx_details.get("nft_tx"),
                     "nft_token_id": tx_details.get("nft_token_id"),
-                    "eco_token_explorer": f"https://sepolia.etherscan.io/tx/{tx_details.get('eco_token_tx')}" if tx_details.get("eco_token_tx") else None,
-                    "nft_explorer": f"https://sepolia.etherscan.io/tx/{tx_details.get('nft_tx')}" if tx_details.get("nft_tx") else None
+                    "eco_token_explorer": f"https://eth-sepolia.blockscout.com/tx/{tx_details.get('eco_token_tx')}" if tx_details.get("eco_token_tx") else None,
+                    "nft_explorer": f"https://eth-sepolia.blockscout.com/tx/{tx_details.get('nft_tx')}" if tx_details.get("nft_tx") else None
                 }
             
             # Add analysis results if available

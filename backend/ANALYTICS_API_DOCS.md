@@ -59,8 +59,8 @@ GET /analytics/user/0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD
         "eco_token_tx": "0xabc123...",
         "nft_tx": "0xdef456...",
         "nft_token_id": 1,
-        "eco_token_explorer": "https://sepolia.etherscan.io/tx/0xabc123...",
-        "nft_explorer": "https://sepolia.etherscan.io/tx/0xdef456..."
+        "eco_token_explorer": "https://eth-sepolia.blockscout.com/tx/0xabc123...",
+        "nft_explorer": "https://eth-sepolia.blockscout.com/tx/0xdef456..."
       },
       "analysis": {
         "carbon_footprint": 100.0,

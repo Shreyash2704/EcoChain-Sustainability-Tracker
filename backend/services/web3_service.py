@@ -267,8 +267,11 @@ class Web3Service:
             # Wait for transaction receipt with longer timeout
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)  # 5 minutes
             
+            # Ensure tx_hash has 0x prefix
+            tx_hash_str = tx_hash.hex() if tx_hash.hex().startswith('0x') else f"0x{tx_hash.hex()}"
+            
             return {
-                "tx_hash": tx_hash.hex(),
+                "tx_hash": tx_hash_str,
                 "block_number": receipt.blockNumber,
                 "gas_used": receipt.gasUsed,
                 "status": "success" if receipt.status == 1 else "failed",
@@ -370,8 +373,11 @@ class Web3Service:
                 except:
                     token_id = "Unknown"
             
+            # Ensure tx_hash has 0x prefix
+            tx_hash_str = tx_hash.hex() if tx_hash.hex().startswith('0x') else f"0x{tx_hash.hex()}"
+            
             return {
-                "tx_hash": tx_hash.hex(),
+                "tx_hash": tx_hash_str,
                 "token_id": token_id,
                 "block_number": receipt.blockNumber,
                 "gas_used": receipt.gasUsed,
