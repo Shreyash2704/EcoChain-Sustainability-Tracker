@@ -96,6 +96,39 @@ async def handle_verifier_data(ctx: Context, sender: str, msg: ChatMessage):
         await ctx.send(sender, response)
         
         print(f"📤 Analysis results sent back to verifier agent")
+        
+        # Send minting request to Minting Agent if tokens should be minted
+        if analysis_result['should_mint']:
+            try:
+                from agents.minting_agent import minting_agent
+                
+                minting_request_data = {
+                    "upload_id": upload_id,
+                    "user_wallet": user_wallet,
+                    "should_mint": analysis_result['should_mint'],
+                    "token_amount": analysis_result['token_amount'],
+                    "carbon_footprint": analysis_result['carbon_footprint'],
+                    "impact_score": analysis_result['impact_score'],
+                    "reasoning": analysis_result['reasoning'],
+                    "document_type": document_type,
+                    "metadata": metadata,
+                    "timestamp": datetime.utcnow().isoformat()
+                }
+                
+                minting_message = ChatMessage(
+                    content=[TextContent(
+                        text=json.dumps(minting_request_data)
+                    )]
+                )
+                
+                await ctx.send(minting_agent.address, minting_message)
+                print(f"🪙 Minting request sent to Minting Agent")
+                
+            except ImportError as e:
+                print(f"⚠️ Could not import minting agent: {e}")
+            except Exception as e:
+                print(f"❌ Error sending to minting agent: {e}")
+        
         print(f"🏁 REASONING ANALYSIS COMPLETED\n")
         
     except json.JSONDecodeError as e:

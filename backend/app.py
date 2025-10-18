@@ -8,6 +8,7 @@ from uagents import Bureau
 from agents.user_agent import user_agent
 from agents.verifier_agent import verifier_agent
 from agents.reasoner_agent import reasoner_agent
+from agents.minting_agent import minting_agent
 import asyncio
 
 # Import API routers
@@ -78,6 +79,7 @@ async def start_bureau():
         bureau.add(user_agent)
         bureau.add(verifier_agent)
         bureau.add(reasoner_agent)
+        bureau.add(minting_agent)
         
         logger.info(f"🚀 Starting Bureau on port {settings.bureau_port}")
         await bureau.run_async()

@@ -97,8 +97,14 @@ class EcoChainApp:
         except ImportError as e:
             logger.warning(f"Could not import reasoner_agent: {e}")
         
+        try:
+            from agents.minting_agent import minting_agent
+            bureau.add(minting_agent)
+            logger.info("Added minting_agent to Bureau")
+        except ImportError as e:
+            logger.warning(f"Could not import minting_agent: {e}")
+        
         # Add other agents as they become available
-        # from agents.minting_agent import minting_agent
         # from agents.notification_agent import notification_agent
         
         self.bureau = bureau

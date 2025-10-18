@@ -7,6 +7,10 @@ import os
 from typing import Optional
 from pydantic_settings import BaseSettings
 from pydantic import Field
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -29,7 +33,6 @@ class Settings(BaseSettings):
     polygon_rpc_url: Optional[str] = Field(default=None, env="POLYGON_RPC_URL")
     arbitrum_rpc_url: Optional[str] = Field(default=None, env="ARBITRUM_RPC_URL")
     sepolia_rpc_url: Optional[str] = Field(default=None, env="SEPOLIA_RPC_URL")
-    
     # Web3 Configuration
     private_key: Optional[str] = Field(default=None, env="PRIVATE_KEY")
     wallet_address: Optional[str] = Field(default=None, env="WALLET_ADDRESS")

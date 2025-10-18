@@ -7,81 +7,46 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from services.web3_service import Web3Service, initialize_web3_service, get_web3_service
+from core.config import settings
 
 # Load environment variables
 load_dotenv()
 
-async def test_web3_service():
-    """Test Web3Service functionality"""
-    print("🧪 Testing Web3Service Integration...\n")
+async def test_web3_connection():
+    print("🔍 Testing Web3Service Connection...")
     
-    # Get configuration from environment
-    rpc_url = os.getenv('SEPOLIA_RPC_URL')
-    private_key = os.getenv('PRIVATE_KEY')
+    # Check if we have the required config
+    print(f"RPC URL: {settings.sepolia_rpc_url}")
+    print(f"Private Key: {'Set' if settings.private_key else 'Not Set'}")
+    print(f"EcoCredit Address: {settings.eco_credit_token_address}")
     
-    if not rpc_url:
-        print("❌ SEPOLIA_RPC_URL not found in environment variables")
-        return
-    
-    if not private_key:
-        print("❌ PRIVATE_KEY not found in environment variables")
+    if not settings.sepolia_rpc_url or not settings.private_key:
+        print("❌ Missing required configuration")
         return
     
     try:
         # Initialize Web3Service
-        print("🔗 Initializing Web3Service...")
-        initialize_web3_service(rpc_url, private_key)
-        web3_service = get_web3_service()
-        print("✅ Web3Service initialized successfully")
+        web3_service = Web3Service(settings.sepolia_rpc_url, settings.private_key)
         
-        # Test contract connections
-        print("\n📋 Testing Contract Connections...")
+        # Test connection
+        is_connected = web3_service.w3.is_connected()
+        print(f"✅ Web3 Connected: {is_connected}")
         
-        # Test EcoCreditToken
-        try:
-            eco_contract = web3_service.get_contract('eco_credit_token')
-            name = eco_contract.functions.name().call()
-            symbol = eco_contract.functions.symbol().call()
-            total_supply = eco_contract.functions.totalSupply().call()
-            print(f"✅ EcoCreditToken: {name} ({symbol}) - Total Supply: {total_supply}")
-        except Exception as e:
-            print(f"❌ EcoCreditToken connection failed: {e}")
-        
-        # Test SustainabilityProof
-        try:
-            proof_contract = web3_service.get_contract('sustainability_proof')
-            # Try to get name and symbol (ERC721 standard functions)
-            try:
-                name = proof_contract.functions.name().call()
-                symbol = proof_contract.functions.symbol().call()
-                print(f"✅ SustainabilityProof: {name} ({symbol})")
-            except:
-                # If name/symbol not available, just confirm connection
-                print("✅ SustainabilityProof: Connected successfully")
-        except Exception as e:
-            print(f"❌ SustainabilityProof connection failed: {e}")
-        
-        # Test ProofRegistry
-        try:
-            registry_contract = web3_service.get_contract('proof_registry')
-            print("✅ ProofRegistry: Connected successfully")
-        except Exception as e:
-            print(f"❌ ProofRegistry connection failed: {e}")
-        
-        # Test user balance (if wallet address is provided)
-        wallet_address = os.getenv('WALLET_ADDRESS')
-        if wallet_address:
-            print(f"\n💰 Testing User Balance for {wallet_address}...")
-            try:
-                balance_info = await web3_service.get_user_token_balance(wallet_address)
-                print(f"✅ Token Balance: {balance_info['balance_formatted']} {balance_info['token_symbol']}")
-            except Exception as e:
-                print(f"❌ Balance check failed: {e}")
-        
-        print("\n🎉 Web3Service test completed!")
-        
+        if is_connected:
+            # Get latest block
+            latest_block = web3_service.w3.eth.block_number
+            print(f"📦 Latest Block: {latest_block}")
+            
+            # Test contract connection
+            contract = web3_service.get_contract('eco_credit_token')
+            print(f"📄 Contract Connected: {contract.address}")
+            
+            # Test a simple read operation
+            total_supply = contract.functions.totalSupply().call()
+            print(f"🪙 Total Supply: {total_supply}")
+            
     except Exception as e:
-        print(f"❌ Web3Service test failed: {e}")
+        print(f"❌ Error: {e}")
 
 if __name__ == "__main__":
-    asyncio.run(test_web3_service())
+    asyncio.run(test_web3_connection())

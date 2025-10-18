@@ -11,6 +11,8 @@ from uagents_core.contrib.protocols.chat import ChatMessage, TextContent
 
 from agents.verifier_agent import verifier_agent, get_upload_status
 from services.lighthouse_service import get_lighthouse_service
+from services.web3_service import initialize_web3_service
+from core.config import settings
 from core.logging import get_logger
 
 router = APIRouter(prefix="/upload", tags=["uploads"])
@@ -23,14 +25,52 @@ upload_sessions = {}
 bureau_instance: Optional[Bureau] = None
 
 async def initialize_bureau():
-    """Initialize the Bureau with verifier agent"""
+    """Initialize the Bureau with all agents"""
     global bureau_instance
     if bureau_instance is None:
         bureau_instance = Bureau(port=8001)
-        bureau_instance.add(verifier_agent)
+        
+        # Add all agents to Bureau
+        try:
+            from agents.user_agent import user_agent
+            bureau_instance.add(user_agent)
+            logger.info("Added user_agent to Bureau")
+        except Exception as e:
+            logger.warning(f"Could not add user_agent: {e}")
+        
+        try:
+            bureau_instance.add(verifier_agent)
+            logger.info("Added verifier_agent to Bureau")
+        except Exception as e:
+            logger.warning(f"Could not add verifier_agent: {e}")
+        
+        try:
+            from agents.reasoner_agent import reasoner_agent
+            bureau_instance.add(reasoner_agent)
+            logger.info("Added reasoner_agent to Bureau")
+        except Exception as e:
+            logger.warning(f"Could not add reasoner_agent: {e}")
+        
+        try:
+            from agents.minting_agent import minting_agent
+            bureau_instance.add(minting_agent)
+            logger.info("Added minting_agent to Bureau")
+        except Exception as e:
+            logger.warning(f"Could not add minting_agent: {e}")
+        
+        # Initialize Web3Service if configuration is available
+        if settings.sepolia_rpc_url and settings.private_key:
+            try:
+                initialize_web3_service(settings.sepolia_rpc_url, settings.private_key)
+                logger.info("✅ Web3Service initialized successfully")
+            except Exception as e:
+                logger.warning(f"⚠️ Web3Service initialization failed: {e}")
+        else:
+            logger.warning("⚠️ Web3Service not initialized - missing RPC URL or private key")
+        
         # Start bureau in background
         asyncio.create_task(bureau_instance.run_async())
-        logger.info("Bureau initialized with verifier agent")
+        logger.info("Bureau initialized with all agents")
 
 @router.post("/")
 async def upload_file(
@@ -148,6 +188,60 @@ async def upload_file(
             
             logger.info(f"Reasoner analysis completed: {analysis_result['should_mint']} - {analysis_result['token_amount']} tokens")
             
+            # If tokens should be minted, trigger the minting agent
+            if analysis_result['should_mint']:
+                try:
+                    from agents.minting_agent import minting_agent
+                    
+                    minting_request_data = {
+                        "upload_id": upload_id,
+                        "user_wallet": user_wallet,
+                        "should_mint": analysis_result['should_mint'],
+                        "token_amount": analysis_result['token_amount'],
+                        "carbon_footprint": analysis_result['carbon_footprint'],
+                        "impact_score": analysis_result['impact_score'],
+                        "reasoning": analysis_result['reasoning'],
+                        "document_type": upload_type,
+                        "metadata": metadata,
+                        "timestamp": datetime.utcnow().isoformat()
+                    }
+                    
+                    minting_message = ChatMessage(
+                        content=[TextContent(
+                            text=json.dumps(minting_request_data)
+                        )]
+                    )
+                    
+                    # Call the minting agent handler directly
+                    from agents.minting_agent import handle_minting_request
+                    
+                    # Create a mock context
+                    class MockContext:
+                        async def send(self, recipient, message):
+                            logger.info(f"📤 Mock response sent to {recipient}")
+                    
+                    mock_context = MockContext()
+                    minting_response = await handle_minting_request(mock_context, "upload-api", minting_message)
+                    logger.info(f"🪙 Minting request processed by Minting Agent for {analysis_result['token_amount']} tokens")
+                    
+                    # Store minting results in upload session
+                    if hasattr(minting_response, 'content') and minting_response.content:
+                        try:
+                            minting_data = json.loads(minting_response.content[0].text)
+                            upload_sessions[upload_id]["minting_results"] = minting_data.get("results", {})
+                            upload_sessions[upload_id]["transaction_details"] = {
+                                "eco_token_tx": minting_data.get("results", {}).get("eco_tokens", {}).get("tx_hash"),
+                                "nft_tx": minting_data.get("results", {}).get("sustainability_nft", {}).get("tx_hash"),
+                                "nft_token_id": minting_data.get("results", {}).get("sustainability_nft", {}).get("token_id"),
+                                "proof_registry_tx": minting_data.get("results", {}).get("proof_registry", {}).get("tx_hash"),
+                                "proof_id": minting_data.get("results", {}).get("proof_registry", {}).get("proof_id")
+                            }
+                        except Exception as e:
+                            logger.error(f"Error parsing minting response: {e}")
+                    
+                except Exception as e:
+                    logger.error(f"❌ Error sending to minting agent: {e}")
+
         except Exception as e:
             logger.error(f"Error in reasoner analysis: {e}")
             # Continue without analysis results
@@ -171,6 +265,37 @@ async def upload_file(
                 "token_amount": analysis['token_amount'],
                 "reasoning": analysis['reasoning'],
                 "impact_score": analysis['impact_score']
+            })
+        
+        # Add transaction details if minting was successful
+        if "transaction_details" in upload_sessions[upload_id]:
+            tx_details = upload_sessions[upload_id]["transaction_details"]
+            response.update({
+                "blockchain_transactions": {
+                    "eco_token_minting": {
+                        "tx_hash": tx_details.get("eco_token_tx"),
+                        "explorer_url": f"https://sepolia.etherscan.io/tx/{tx_details.get('eco_token_tx')}" if tx_details.get("eco_token_tx") else None,
+                        "amount": analysis.get('token_amount', 0) if "analysis_result" in upload_sessions[upload_id] else 0
+                    },
+                    "nft_minting": {
+                        "tx_hash": tx_details.get("nft_tx"),
+                        "token_id": tx_details.get("nft_token_id"),
+                        "explorer_url": f"https://sepolia.etherscan.io/tx/{tx_details.get('nft_tx')}" if tx_details.get("nft_tx") else None,
+                        "nft_contract": "0x17874E9d6e22bf8025Fe7473684e50f36472CCd2"
+                    },
+                    "proof_registration": {
+                        "tx_hash": tx_details.get("proof_registry_tx"),
+                        "proof_id": tx_details.get("proof_id"),
+                        "explorer_url": f"https://sepolia.etherscan.io/tx/{tx_details.get('proof_registry_tx')}" if tx_details.get("proof_registry_tx") else None,
+                        "registry_contract": "0xc3f19798eC4aB47734209f99cAF63B6Fd9a04081"
+                    }
+                },
+                "wallet_info": {
+                    "user_wallet": user_wallet,
+                    "wallet_explorer": f"https://sepolia.etherscan.io/address/{user_wallet}",
+                    "eco_token_balance": f"https://sepolia.etherscan.io/token/0x6adB8BB5BB5Df5aB3596fc63dbAd51b092dee08f?a={user_wallet}",
+                    "nft_collection": f"https://sepolia.etherscan.io/token/0x17874E9d6e22bf8025Fe7473684e50f36472CCd2?a={user_wallet}"
+                }
             })
         
         return response
