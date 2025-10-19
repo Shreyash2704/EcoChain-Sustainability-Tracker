@@ -10,7 +10,10 @@ import {
   Calendar,
   ExternalLink,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Upload,
+  MessageCircle,
+  Trophy
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -18,7 +21,7 @@ export default function DashboardPage() {
   const walletAddress = user?.wallet?.address || '';
   
   const { data: analytics, isLoading: analyticsLoading, error: analyticsError } = useUserAnalytics(walletAddress);
-  const { data: recentActivity, isLoading: activityLoading } = useRecentActivity(10);
+  const { data: recentActivity, isLoading: activityLoading } = useRecentActivity(walletAddress, 10);
 
   if (!authenticated) {
     return (

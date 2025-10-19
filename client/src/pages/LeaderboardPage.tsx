@@ -73,9 +73,9 @@ export default function LeaderboardPage() {
   }
 
   const topUsers = leaderboard?.top_users || [];
-  const totalUsers = systemOverview?.total_users || 0;
-  const totalDocuments = systemOverview?.total_documents || 0;
-  const totalCredits = systemOverview?.total_credits_earned || 0;
+  const totalUsers = systemOverview?.system_overview?.total_users || 0;
+  const totalDocuments = systemOverview?.system_overview?.total_uploads || 0;
+  const totalCredits = systemOverview?.system_overview?.total_credits_distributed || 0;
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -148,10 +148,10 @@ export default function LeaderboardPage() {
                   </div>
                 </div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                  {topUsers[1].wallet_address?.slice(0, 6)}...{topUsers[1].wallet_address?.slice(-4)}
+                        {topUsers[1].user_wallet?.slice(0, 6)}...{topUsers[1].user_wallet?.slice(-4)}
                 </h3>
                 <p className="text-2xl font-bold text-gray-400 mb-2">
-                  {topUsers[1].total_credits_earned || 0}
+                  {topUsers[1].total_credits || 0}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Credits</p>
               </div>
@@ -169,10 +169,10 @@ export default function LeaderboardPage() {
                   </div>
                 </div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                  {topUsers[0].wallet_address?.slice(0, 6)}...{topUsers[0].wallet_address?.slice(-4)}
+                        {topUsers[0].user_wallet?.slice(0, 6)}...{topUsers[0].user_wallet?.slice(-4)}
                 </h3>
                 <p className="text-3xl font-bold text-yellow-600 mb-2">
-                  {topUsers[0].total_credits_earned || 0}
+                  {topUsers[0].total_credits || 0}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Credits</p>
               </div>
@@ -190,10 +190,10 @@ export default function LeaderboardPage() {
                   </div>
                 </div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                  {topUsers[2].wallet_address?.slice(0, 6)}...{topUsers[2].wallet_address?.slice(-4)}
+                        {topUsers[2].user_wallet?.slice(0, 6)}...{topUsers[2].user_wallet?.slice(-4)}
                 </h3>
                 <p className="text-2xl font-bold text-amber-600 mb-2">
-                  {topUsers[2].total_credits_earned || 0}
+                  {topUsers[2].total_credits || 0}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Credits</p>
               </div>
@@ -231,14 +231,14 @@ export default function LeaderboardPage() {
                   <div className="flex-1">
                     <div className="flex items-center space-x-2">
                       <h3 className="font-semibold text-gray-900 dark:text-white">
-                        {user.wallet_address?.slice(0, 6)}...{user.wallet_address?.slice(-4)}
+                        {user.user_wallet?.slice(0, 6)}...{user.user_wallet?.slice(-4)}
                       </h3>
                       {index < 3 && (
                         <Star className="w-4 h-4 text-yellow-500" />
                       )}
                     </div>
                     <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300">
-                      <span>{user.total_documents_uploaded || 0} documents</span>
+                      <span>{user.total_uploads || 0} documents</span>
                       <span>•</span>
                       <span>{user.success_rate ? `${user.success_rate.toFixed(1)}%` : '0%'} success</span>
                     </div>
@@ -247,7 +247,7 @@ export default function LeaderboardPage() {
 
                 <div className="text-right">
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {user.total_credits_earned || 0}
+                    {user.total_credits || 0}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-300">credits</p>
                 </div>

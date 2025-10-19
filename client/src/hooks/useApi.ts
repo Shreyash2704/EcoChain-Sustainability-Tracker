@@ -10,7 +10,7 @@ export const queryKeys = {
   userAnalytics: (walletAddress: string) => ['analytics', 'user', walletAddress] as const,
   leaderboard: (limit: number) => ['analytics', 'leaderboard', limit] as const,
   systemOverview: ['analytics', 'overview'] as const,
-  recentActivity: (limit: number) => ['analytics', 'recent', limit] as const,
+  recentActivity: (walletAddress: string, limit: number) => ['analytics', 'recent', walletAddress, limit] as const,
   uploadStatus: (uploadId: string) => ['upload', 'status', uploadId] as const,
 };
 
@@ -103,11 +103,12 @@ export const useSystemOverview = () => {
   });
 };
 
-export const useRecentActivity = (limit = 20) => {
+export const useRecentActivity = (walletAddress: string, limit = 20) => {
   return useQuery({
-    queryKey: queryKeys.recentActivity(limit),
-    queryFn: () => analyticsApi.getRecentActivity(limit),
+    queryKey: queryKeys.recentActivity(walletAddress, limit),
+    queryFn: () => analyticsApi.getRecentActivity(walletAddress, limit),
     refetchInterval: 60000, // Refetch every minute
+    enabled: !!walletAddress, // Only run if wallet address is provided
   });
 };
 

@@ -190,12 +190,17 @@ async def get_leaderboard(
     - carbon_impact: Total carbon impact
     """
     try:
+        print(f"🔍 DEBUG: Leaderboard API - Request for limit: {limit}, sort_by: {sort_by}")
+        
         # Get Web3Service instance (optional)
         web3_service = get_web3_service()
         blockchain_data_available = web3_service is not None
         
         # Group uploads by user
         user_stats = {}
+        print(f"🔍 DEBUG: Leaderboard API - Total upload sessions: {len(upload_sessions)}")
+        print(f"🔍 DEBUG: Leaderboard API - Upload sessions type: {type(upload_sessions)}")
+        print(f"🔍 DEBUG: Leaderboard API - First few upload sessions: {list(upload_sessions.keys())[:3] if upload_sessions else 'None'}")
         
         for upload in upload_sessions.values():
             user_wallet = upload.get("user_wallet")
@@ -248,6 +253,8 @@ async def get_leaderboard(
             for user_wallet in user_stats.keys():
                 user_stats[user_wallet]["total_nfts"] = 0
         
+        print(f"🔍 DEBUG: Leaderboard API - User stats: {len(user_stats)} users")
+        
         # Sort by specified criteria
         sort_key_map = {
             "credits": "total_credits",
@@ -257,6 +264,7 @@ async def get_leaderboard(
         }
         
         sort_key = sort_key_map.get(sort_by, "total_credits")
+        print(f"🔍 DEBUG: Leaderboard API - Sort key: {sort_key}")
         
         leaderboard = sorted(
             user_stats.values(), 
@@ -264,13 +272,15 @@ async def get_leaderboard(
             reverse=True
         )[:limit]
         
+        print(f"🔍 DEBUG: Leaderboard API - Leaderboard length: {len(leaderboard)}")
+        
         # Add ranking
         for i, user in enumerate(leaderboard):
             user["rank"] = i + 1
             user["success_rate"] = (user["successful_uploads"] / user["total_uploads"] * 100) if user["total_uploads"] > 0 else 0
         
         return {
-            "leaderboard": leaderboard,
+            "top_users": leaderboard,
             "total_users": len(user_stats),
             "total_uploads": len(upload_sessions),
             "sort_by": sort_by,
@@ -279,6 +289,9 @@ async def get_leaderboard(
         }
         
     except Exception as e:
+        print(f"🔍 DEBUG: Leaderboard API - Exception: {e}")
+        import traceback
+        print(f"🔍 DEBUG: Leaderboard API - Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Failed to get leaderboard: {str(e)}")
 
 @router.get("/stats/overview")
