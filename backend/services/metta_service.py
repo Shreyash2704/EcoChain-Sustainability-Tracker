@@ -16,7 +16,15 @@ import aiofiles
 class MeTTaService:
     def __init__(self, metta_path: str = None, wrapper_url: str = None):
         self.metta_path = metta_path or os.getenv('METTA_PATH', 'metta')
-        self.wrapper_url = wrapper_url or os.getenv('METTA_WRAPPER_URL')
+        # Try to get wrapper URL from settings first, then environment
+        if wrapper_url:
+            self.wrapper_url = wrapper_url
+        else:
+            try:
+                from core.config import settings
+                self.wrapper_url = settings.metta_wrapper_url
+            except:
+                self.wrapper_url = os.getenv('METTA_WRAPPER_URL')
         self.timeout = 30  # seconds
     
     async def analyze_sustainability_data(
@@ -119,30 +127,53 @@ class MeTTaService:
         analysis_type: str
     ) -> Dict[str, Any]:
         """
-        Call MeTTa wrapper API
+        Call MeTTa Docker API
         """
         import aiohttp
         
-        payload = {
-            "data": data,
-            "analysis_type": analysis_type,
-            "timestamp": datetime.utcnow().isoformat()
+        # Prepare data for MeTTa API
+        # Extract data from nested sustainability_metrics if present
+        sustainability_metrics = data.get("sustainability_metrics", {})
+        
+        metta_data = {
+            "carbon_footprint": sustainability_metrics.get("carbon_footprint", data.get("carbon_footprint", 0)),
+            "waste_reduction_percentage": sustainability_metrics.get("waste_reduction_percentage", sustainability_metrics.get("waste_reduction", data.get("waste_reduction_percentage", 0))),
+            "renewable_energy_percentage": sustainability_metrics.get("renewable_energy_percentage", data.get("renewable_energy_percentage", 0)),
+            "document_type": data.get("document_type", "sustainability_document"),
+            "content": data.get("content", ""),
+            "metadata": data.get("metadata", {})
         }
         
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 f"{self.wrapper_url}/analyze",
-                json=payload,
+                json=metta_data,
                 timeout=aiohttp.ClientTimeout(total=self.timeout)
             ) as response:
                 if response.status != 200:
+                    error_text = await response.text()
                     raise HTTPException(
                         status_code=500,
-                        detail=f"MeTTa wrapper API error: {await response.text()}"
+                        detail=f"MeTTa Docker API error: {error_text}"
                     )
                 
                 result = await response.json()
-                return result
+                # Convert MeTTa API response to expected format
+                return {
+                    "impact_score": result.get("impact_score", 0),
+                    "token_amount": result.get("token_amount", 0),
+                    "should_mint": result.get("should_mint", False),
+                    "sustainability_level": result.get("sustainability_level", "fair"),
+                    "environmental_impact": result.get("environmental_impact", "medium"),
+                    "recommendation": result.get("recommendation", "Continue sustainability efforts"),
+                    "reasoning": result.get("reasoning", "MeTTa analysis completed"),
+                    "carbon_credits": result.get("carbon_credits", 0),
+                    "waste_bonus": result.get("waste_bonus", 0),
+                    "renewable_bonus": result.get("renewable_bonus", 0),
+                    "document_multiplier": result.get("document_multiplier", 1.0),
+                    "method": "metta_docker",
+                    "timestamp": datetime.utcnow().isoformat()
+                }
     
     async def _call_local_metta(
         self, 

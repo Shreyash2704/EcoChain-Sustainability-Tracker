@@ -415,24 +415,68 @@ class Web3Service:
             Dict containing transaction details
         """
         try:
-            # TEMPORARY: Skip proof registration due to contract issues
-            # TODO: Fix ProofRegistry contract ABI and permissions
-            print(f"⚠️ TEMPORARILY SKIPPING proof registration due to contract issues")
-            print(f"   Proof ID: {proof_id}")
-            print(f"   User: {user_address}")
-            print(f"   Type: {proof_type}")
-            print(f"   Carbon Impact: {carbon_impact}")
-            print(f"   Metadata URI: {metadata_uri}")
+            if not self.account:
+                raise HTTPException(
+                    status_code=500,
+                    detail="No account configured for proof registration"
+                )
             
-            # Return a mock success response for now
+            contract = self.get_contract('proof_registry')
+            
+            # Estimate gas for the transaction
+            try:
+                estimated_gas = contract.functions.registerProof(
+                    user_address,
+                    proof_type,
+                    carbon_impact,
+                    metadata_uri,
+                    proof_id  # Using proof_id as ipfsCID
+                ).estimate_gas({'from': self.account.address})
+                gas_limit = int(estimated_gas * 1.2)  # Add 20% buffer
+            except Exception as e:
+                print(f"⚠️ Gas estimation failed: {e}")
+                gas_limit = 500000  # Use higher default for proof registration
+            
+            # Get current gas price and add buffer for faster confirmation
+            current_gas_price = self.w3.eth.gas_price
+            # Increase gas price by 20% to avoid "replacement transaction underpriced" error
+            gas_price = int(current_gas_price * 1.2)
+            
+            # Build transaction
+            transaction = contract.functions.registerProof(
+                user_address,
+                proof_type,
+                carbon_impact,
+                metadata_uri,
+                proof_id  # Using proof_id as ipfsCID
+            ).build_transaction({
+                'from': self.account.address,
+                'gas': gas_limit,
+                'gasPrice': gas_price,
+                'nonce': self.w3.eth.get_transaction_count(self.account.address)
+            })
+            
+            # Sign and send transaction
+            signed_txn = self.w3.eth.account.sign_transaction(transaction, self.private_key)
+            tx_hash = self.w3.eth.send_raw_transaction(signed_txn.raw_transaction)
+            
+            print(f"⛽ Proof Registration Transaction sent with gas price: {gas_price} wei ({gas_price / 1e9:.2f} Gwei)")
+            
+            # Wait for transaction receipt with longer timeout
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)  # 5 minutes
+            
+            # Ensure tx_hash has 0x prefix
+            tx_hash_str = tx_hash.hex() if tx_hash.hex().startswith('0x') else f"0x{tx_hash.hex()}"
+            
             return {
-                "tx_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-                "block_number": 0,
-                "gas_used": 0,
-                "status": "skipped",
+                "tx_hash": tx_hash_str,
+                "block_number": receipt.blockNumber,
+                "gas_used": receipt.gasUsed,
+                "status": "success" if receipt.status == 1 else "failed",
                 "proof_id": proof_id,
                 "user_address": user_address,
-                "note": "Proof registration temporarily disabled - contract ABI needs fixing"
+                "proof_type": proof_type,
+                "carbon_impact": carbon_impact
             }
             
         except Exception as e:

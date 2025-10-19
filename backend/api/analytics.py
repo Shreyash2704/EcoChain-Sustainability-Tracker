@@ -92,7 +92,7 @@ async def get_user_analytics(user_wallet: str):
             upload_history.append(upload_info)
         
         # Sort uploads by timestamp (newest first)
-        upload_history.sort(key=lambda x: x.get("upload_timestamp", ""), reverse=True)
+        upload_history.sort(key=lambda x: x.get("upload_timestamp") or "", reverse=True)
         
         # Calculate additional statistics
         successful_uploads = len([u for u in user_uploads if u.get("status") == "completed"])
@@ -104,11 +104,17 @@ async def get_user_analytics(user_wallet: str):
         
         # Get recent activity (last 30 days)
         thirty_days_ago = datetime.utcnow() - timedelta(days=30)
-        recent_uploads = [
-            upload for upload in user_uploads 
-            if upload.get("timestamp") and 
-            datetime.fromisoformat(upload["timestamp"].replace('Z', '+00:00')) > thirty_days_ago
-        ]
+        recent_uploads = []
+        for upload in user_uploads:
+            timestamp = upload.get("timestamp")
+            if timestamp:
+                try:
+                    upload_time = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                    if upload_time > thirty_days_ago:
+                        recent_uploads.append(upload)
+                except (ValueError, AttributeError):
+                    # Skip uploads with invalid timestamps
+                    continue
         
         # Prepare response
         response = {
@@ -234,7 +240,7 @@ async def get_leaderboard(
         
         leaderboard = sorted(
             user_stats.values(), 
-            key=lambda x: x[sort_key], 
+            key=lambda x: x.get(sort_key, 0), 
             reverse=True
         )[:limit]
         
@@ -280,11 +286,17 @@ async def get_system_overview():
         
         # Get recent activity (last 7 days)
         seven_days_ago = datetime.utcnow() - timedelta(days=7)
-        recent_uploads = [
-            upload for upload in upload_sessions.values() 
-            if upload.get("timestamp") and 
-            datetime.fromisoformat(upload["timestamp"].replace('Z', '+00:00')) > seven_days_ago
-        ]
+        recent_uploads = []
+        for upload in upload_sessions.values():
+            timestamp = upload.get("timestamp")
+            if timestamp:
+                try:
+                    upload_time = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                    if upload_time > seven_days_ago:
+                        recent_uploads.append(upload)
+                except (ValueError, AttributeError):
+                    # Skip uploads with invalid timestamps
+                    continue
         
         # Get contract statistics (if Web3Service available)
         total_eco_supply = 0
@@ -342,14 +354,20 @@ async def get_user_recent_activity(
         
         # Filter by date
         cutoff_date = datetime.utcnow() - timedelta(days=days)
-        recent_uploads = [
-            upload for upload in user_uploads 
-            if upload.get("timestamp") and 
-            datetime.fromisoformat(upload["timestamp"].replace('Z', '+00:00')) > cutoff_date
-        ]
+        recent_uploads = []
+        for upload in user_uploads:
+            timestamp = upload.get("timestamp")
+            if timestamp:
+                try:
+                    upload_time = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                    if upload_time > cutoff_date:
+                        recent_uploads.append(upload)
+                except (ValueError, AttributeError):
+                    # Skip uploads with invalid timestamps
+                    continue
         
         # Sort by timestamp (newest first)
-        recent_uploads.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+        recent_uploads.sort(key=lambda x: x.get("timestamp") or "", reverse=True)
         
         # Calculate recent statistics
         recent_credits = sum(upload.get("token_amount", 0) for upload in recent_uploads)

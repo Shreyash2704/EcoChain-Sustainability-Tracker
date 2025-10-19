@@ -164,6 +164,24 @@ async def analyze_document_and_calculate_credits(
         # Parse document content to extract sustainability data
         try:
             document_data = json.loads(decoded_content)
+            
+            # Check if data is at root level or nested in sustainability_metrics
+            if 'sustainability_metrics' in document_data:
+                # Data is already in the expected nested format
+                pass
+            else:
+                # Data is at root level, move it to sustainability_metrics
+                sustainability_metrics = {}
+                for key in ['carbon_footprint', 'waste_reduction_percentage', 'renewable_energy_percentage', 'energy_consumption', 'waste_reduction']:
+                    if key in document_data:
+                        sustainability_metrics[key] = document_data[key]
+                
+                # Create the nested structure
+                document_data = {
+                    "sustainability_metrics": sustainability_metrics,
+                    "document_type": document_data.get('document_type', document_type)
+                }
+                
         except:
             # If not JSON, create a mock structure
             document_data = {
@@ -183,28 +201,18 @@ async def analyze_document_and_calculate_credits(
         
         print(f"✅ MeTTa analysis completed")
         
-        # Extract sustainability metrics from MeTTa result
+        # Use MeTTa results directly instead of recalculating
+        # Extract sustainability metrics from MeTTa result for carbon_footprint
         sustainability_metrics = metta_result.get('sustainability_metrics', {})
         carbon_footprint = sustainability_metrics.get('carbon_footprint', 0)
-        energy_consumption = sustainability_metrics.get('energy_consumption', 0)
-        waste_reduction = sustainability_metrics.get('waste_reduction', 0)
-        renewable_energy_percentage = sustainability_metrics.get('renewable_energy_percentage', 0)
         
-        # Calculate carbon credits based on sustainability metrics
-        credit_calculation = calculate_carbon_credits(
-            carbon_footprint=carbon_footprint,
-            energy_consumption=energy_consumption,
-            waste_reduction=waste_reduction,
-            renewable_energy_percentage=renewable_energy_percentage,
-            document_type=document_type
-        )
-        
+        # Use MeTTa analysis results directly
         return {
-            "should_mint": credit_calculation['should_mint'],
-            "token_amount": credit_calculation['token_amount'],
+            "should_mint": metta_result.get('should_mint', False),
+            "token_amount": metta_result.get('token_amount', 0),
             "carbon_footprint": carbon_footprint,
-            "reasoning": credit_calculation['reasoning'],
-            "impact_score": credit_calculation['impact_score'],
+            "reasoning": metta_result.get('reasoning', 'MeTTa analysis completed'),
+            "impact_score": metta_result.get('impact_score', 0),
             "metta_analysis": metta_result
         }
         
