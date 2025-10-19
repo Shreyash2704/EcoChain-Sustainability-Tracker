@@ -24,9 +24,12 @@ async def get_user_analytics(user_wallet: str):
     - Summary statistics
     """
     try:
+        print(f"🔍 DEBUG: Analytics API - Request for wallet: {user_wallet}")
+        
         # Get Web3Service instance (optional)
         web3_service = get_web3_service()
         blockchain_data_available = web3_service is not None
+        print(f"🔍 DEBUG: Analytics API - Web3Service available: {blockchain_data_available}")
         
         # Get blockchain data (if available)
         token_balance = None
@@ -34,22 +37,36 @@ async def get_user_analytics(user_wallet: str):
         
         if blockchain_data_available:
             try:
+                print(f"🔍 DEBUG: Analytics API - Getting token balance...")
                 token_balance = await web3_service.get_user_token_balance(user_wallet)
-                user_nfts = await web3_service.get_user_nfts(user_wallet)
+                print(f"🔍 DEBUG: Analytics API - Token balance: {token_balance}")
             except Exception as e:
-                print(f"⚠️ Failed to get blockchain data: {e}")
-                blockchain_data_available = False
+                print(f"⚠️ Failed to get token balance: {e}")
+                token_balance = None
+            
+            try:
+                print(f"🔍 DEBUG: Analytics API - Getting NFTs...")
+                user_nfts = await web3_service.get_user_nfts(user_wallet)
+                print(f"🔍 DEBUG: Analytics API - NFTs: {user_nfts}")
+            except Exception as e:
+                print(f"⚠️ Failed to get NFTs: {e}")
+                user_nfts = []
         
         # Get backend upload data
         user_uploads = [
             upload for upload in upload_sessions.values() 
             if upload.get("user_wallet", "").lower() == user_wallet.lower()
         ]
+        print(f"🔍 DEBUG: Analytics API - User uploads found: {len(user_uploads)}")
         
         # Calculate detailed statistics
         total_uploads = len(user_uploads)
         total_credits_earned = sum(upload.get("token_amount", 0) for upload in user_uploads)
         total_nfts = len(user_nfts) if blockchain_data_available else 0
+        
+        print(f"🔍 DEBUG: Analytics API - Total uploads: {total_uploads}")
+        print(f"🔍 DEBUG: Analytics API - Total credits earned: {total_credits_earned}")
+        print(f"🔍 DEBUG: Analytics API - Total NFTs: {total_nfts}")
         
         # Process upload history with detailed information
         upload_history = []
@@ -142,6 +159,7 @@ async def get_user_analytics(user_wallet: str):
                     "nfts": user_nfts
                 }
             }
+            print(f"🔍 DEBUG: Analytics API - Added blockchain data: {token_balance.get('balance_formatted', '0')} tokens")
         else:
             response["summary"]["total_eco_tokens"] = "N/A (Web3Service not available)"
             response["summary"]["total_nfts_owned"] = "N/A (Web3Service not available)"
@@ -149,7 +167,9 @@ async def get_user_analytics(user_wallet: str):
                 "status": "unavailable",
                 "message": "Web3Service not initialized or blockchain data unavailable"
             }
+            print(f"🔍 DEBUG: Analytics API - No blockchain data available")
         
+        print(f"🔍 DEBUG: Analytics API - Final response: {response}")
         return response
         
     except Exception as e:

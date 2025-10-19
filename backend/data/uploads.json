@@ -1396,5 +1396,427 @@
       "proof_registry_tx": null,
       "proof_id": null
     }
+  },
+  "209bf1ce-c5fb-47ce-8ad4-83bbc7e32421": {
+    "upload_id": "209bf1ce-c5fb-47ce-8ad4-83bbc7e32421",
+    "filename": "test_data_new.json",
+    "content_type": "application/json",
+    "upload_type": "sustainability_document",
+    "user_wallet": "0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD",
+    "metadata": null,
+    "status": "completed",
+    "created_at": "2025-10-19T10:07:03.614924",
+    "file_size": 1105,
+    "cid": "QmMock209bf1cec5fb47ce8ad483bbc7e32421",
+    "gateway_url": "https://gateway.lighthouse.storage/ipfs/QmMock209bf1cec5fb47ce8ad483bbc7e32421",
+    "completed_at": "2025-10-19T10:07:04.626328",
+    "analysis_result": {
+      "should_mint": true,
+      "token_amount": 33.0,
+      "carbon_footprint": 0,
+      "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+      "impact_score": 67.5,
+      "metta_analysis": {
+        "impact_score": 67.5,
+        "token_amount": 33.0,
+        "should_mint": true,
+        "sustainability_level": "fair",
+        "environmental_impact": "low",
+        "recommendation": "Room for improvement. Consider implementing additional sustainability measures.",
+        "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+        "carbon_credits": 45.0,
+        "waste_bonus": 0.0,
+        "renewable_bonus": 0.0,
+        "document_multiplier": 1.5,
+        "method": "metta_docker",
+        "timestamp": "2025-10-19T10:07:04.843551"
+      }
+    },
+    "should_mint": true,
+    "token_amount": 33.0,
+    "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+    "minting_results": {
+      "eco_tokens": {
+        "success": true,
+        "tx_hash": "0xc1b69dc3d25f17094c42722c01fb12f6aae81dda87471e148d8188ee0ea7cb41",
+        "amount": 33.0,
+        "amount_wei": 33000000000000000000,
+        "block_number": 9444501,
+        "gas_used": 207529
+      },
+      "sustainability_nft": {
+        "success": true,
+        "tx_hash": "0x0bab63764fce0fed0bc102dbe96531a02c21eef0f82473c49c903fbf6d78aad1",
+        "token_id": 25,
+        "proof_type": "sustainability_document",
+        "carbon_amount": 0,
+        "metadata_uri": "https://gateway.lighthouse.storage/ipfs/QmMock209bf1cec5fb47ce8ad483bbc7e32421",
+        "block_number": 9444502,
+        "gas_used": 35067
+      },
+      "proof_registry": {
+        "success": false,
+        "error": "500: Proof registration failed: \nABI Not Found!\nFound 1 element(s) named `registerProof` that accept 5 argument(s).\nThe provided arguments are not valid.\nProvided argument types: (address,str,int,str,str)\nProvided keyword argument types: {}\n\nTried to find a matching ABI element named `registerProof`, but encountered the following problems:\nSignature: registerProof(address,string,string,uint256,string), type: function\nArgument 1 value `0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD` is valid.\nArgument 2 value `sustainability_document` is valid.\nArgument 3 value `0` is not compatible with type `string`.\nArgument 4 value `https://gateway.lighthouse.storage/ipfs/QmMock209bf1cec5fb47ce8ad483bbc7e32421` is not compatible with type `uint256`.\nArgument 5 value `proof_209bf1ce-c5fb-47ce-8ad4-83bbc7e32421` is valid.\n"
+      }
+    },
+    "transaction_details": {
+      "eco_token_tx": "0xc1b69dc3d25f17094c42722c01fb12f6aae81dda87471e148d8188ee0ea7cb41",
+      "nft_tx": "0x0bab63764fce0fed0bc102dbe96531a02c21eef0f82473c49c903fbf6d78aad1",
+      "nft_token_id": 25,
+      "proof_registry_tx": null,
+      "proof_id": null
+    }
+  },
+  "e6aeab15-8bb4-4c6e-b9aa-98a58b19648e": {
+    "upload_id": "e6aeab15-8bb4-4c6e-b9aa-98a58b19648e",
+    "filename": "test_data_new.json",
+    "content_type": "application/json",
+    "upload_type": "sustainability_document",
+    "user_wallet": "0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD",
+    "metadata": null,
+    "status": "completed",
+    "created_at": "2025-10-19T10:12:10.426177",
+    "file_size": 1105,
+    "cid": "QmMocke6aeab158bb44c6eb9aa98a58b19648e",
+    "gateway_url": "https://gateway.lighthouse.storage/ipfs/QmMocke6aeab158bb44c6eb9aa98a58b19648e",
+    "completed_at": "2025-10-19T10:12:11.439629",
+    "analysis_result": {
+      "should_mint": true,
+      "token_amount": 33.0,
+      "carbon_footprint": 0,
+      "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+      "impact_score": 67.5,
+      "metta_analysis": {
+        "impact_score": 67.5,
+        "token_amount": 33.0,
+        "should_mint": true,
+        "sustainability_level": "fair",
+        "environmental_impact": "low",
+        "recommendation": "Room for improvement. Consider implementing additional sustainability measures.",
+        "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+        "carbon_credits": 45.0,
+        "waste_bonus": 0.0,
+        "renewable_bonus": 0.0,
+        "document_multiplier": 1.5,
+        "method": "metta_docker",
+        "timestamp": "2025-10-19T10:12:11.476693"
+      }
+    },
+    "should_mint": true,
+    "token_amount": 33.0,
+    "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+    "minting_results": {
+      "eco_tokens": {
+        "success": true,
+        "tx_hash": "0x12ae7047e51482e660b56d5c5eb618834726ac229b73cfb9e77da0a508814008",
+        "amount": 33.0,
+        "amount_wei": 33000000000000000000,
+        "block_number": 9444526,
+        "gas_used": 207529
+      },
+      "sustainability_nft": {
+        "success": true,
+        "tx_hash": "0x4d827a93af5897fe67c942f377d25e50ae257e27e0d408eb4e1cefe56109d189",
+        "token_id": 25,
+        "proof_type": "sustainability_document",
+        "carbon_amount": 0,
+        "metadata_uri": "https://gateway.lighthouse.storage/ipfs/QmMocke6aeab158bb44c6eb9aa98a58b19648e",
+        "block_number": 9444527,
+        "gas_used": 35067
+      },
+      "proof_registry": {
+        "success": false,
+        "error": "500: Proof registration failed: \nABI Not Found!\nFound 1 element(s) named `registerProof` that accept 5 argument(s).\nThe provided arguments are not valid.\nProvided argument types: (address,str,int,str,str)\nProvided keyword argument types: {}\n\nTried to find a matching ABI element named `registerProof`, but encountered the following problems:\nSignature: registerProof(address,string,string,uint256,string), type: function\nArgument 1 value `0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD` is valid.\nArgument 2 value `sustainability_document` is valid.\nArgument 3 value `1000000000000000000` is not compatible with type `string`.\nArgument 4 value `https://gateway.lighthouse.storage/ipfs/QmMocke6aeab158bb44c6eb9aa98a58b19648e` is not compatible with type `uint256`.\nArgument 5 value `proof_e6aeab15-8bb4-4c6e-b9aa-98a58b19648e` is valid.\n"
+      }
+    },
+    "transaction_details": {
+      "eco_token_tx": "0x12ae7047e51482e660b56d5c5eb618834726ac229b73cfb9e77da0a508814008",
+      "nft_tx": "0x4d827a93af5897fe67c942f377d25e50ae257e27e0d408eb4e1cefe56109d189",
+      "nft_token_id": 25,
+      "proof_registry_tx": null,
+      "proof_id": null
+    }
+  },
+  "80984555-7595-4a48-b5a5-ba18e3966bec": {
+    "upload_id": "80984555-7595-4a48-b5a5-ba18e3966bec",
+    "filename": "test_data_new.json",
+    "content_type": "application/json",
+    "upload_type": "sustainability_document",
+    "user_wallet": "0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD",
+    "metadata": null,
+    "status": "completed",
+    "created_at": "2025-10-19T10:17:17.593052",
+    "file_size": 1105,
+    "cid": "QmMock8098455575954a48b5a5ba18e3966bec",
+    "gateway_url": "https://gateway.lighthouse.storage/ipfs/QmMock8098455575954a48b5a5ba18e3966bec",
+    "completed_at": "2025-10-19T10:17:18.600823",
+    "analysis_result": {
+      "should_mint": true,
+      "token_amount": 33.0,
+      "carbon_footprint": 0,
+      "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+      "impact_score": 67.5,
+      "metta_analysis": {
+        "impact_score": 67.5,
+        "token_amount": 33.0,
+        "should_mint": true,
+        "sustainability_level": "fair",
+        "environmental_impact": "low",
+        "recommendation": "Room for improvement. Consider implementing additional sustainability measures.",
+        "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+        "carbon_credits": 45.0,
+        "waste_bonus": 0.0,
+        "renewable_bonus": 0.0,
+        "document_multiplier": 1.5,
+        "method": "metta_docker",
+        "timestamp": "2025-10-19T10:17:18.663112"
+      }
+    },
+    "should_mint": true,
+    "token_amount": 33.0,
+    "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+    "minting_results": {
+      "eco_tokens": {
+        "success": true,
+        "tx_hash": "0x80441dc5c8080d3fed9d83205c87509b04c9a7a24658284596a2d5e04e721ef7",
+        "amount": 33.0,
+        "amount_wei": 33000000000000000000,
+        "block_number": 9444551,
+        "gas_used": 207529
+      },
+      "sustainability_nft": {
+        "success": true,
+        "tx_hash": "0x7d41ee03ffc28fbb5f3daf8bff553c3e02c5563f31a5620d2176b60a6fc24df7",
+        "token_id": 25,
+        "proof_type": "sustainability_document",
+        "carbon_amount": 0,
+        "metadata_uri": "https://gateway.lighthouse.storage/ipfs/QmMock8098455575954a48b5a5ba18e3966bec",
+        "block_number": 9444552,
+        "gas_used": 35067
+      },
+      "proof_registry": {
+        "success": true,
+        "tx_hash": "0x0e257539927074a5d470acfecdc3bc633448b242af3b6ccf548f70e6b4bbf847",
+        "proof_id": "proof_80984555-7595-4a48-b5a5-ba18e3966bec",
+        "block_number": 9444553
+      }
+    },
+    "transaction_details": {
+      "eco_token_tx": "0x80441dc5c8080d3fed9d83205c87509b04c9a7a24658284596a2d5e04e721ef7",
+      "nft_tx": "0x7d41ee03ffc28fbb5f3daf8bff553c3e02c5563f31a5620d2176b60a6fc24df7",
+      "nft_token_id": 25,
+      "proof_registry_tx": "0x0e257539927074a5d470acfecdc3bc633448b242af3b6ccf548f70e6b4bbf847",
+      "proof_id": "proof_80984555-7595-4a48-b5a5-ba18e3966bec"
+    }
+  },
+  "99bcf2d4-3f73-48f8-a93f-30a5e1db751f": {
+    "upload_id": "99bcf2d4-3f73-48f8-a93f-30a5e1db751f",
+    "filename": "test_data.json",
+    "content_type": "application/json",
+    "upload_type": "sustainability_document",
+    "user_wallet": "0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD",
+    "metadata": null,
+    "status": "completed",
+    "created_at": "2025-10-19T11:02:28.002963",
+    "file_size": 702,
+    "cid": "QmMock99bcf2d43f7348f8a93f30a5e1db751f",
+    "gateway_url": "https://gateway.lighthouse.storage/ipfs/QmMock99bcf2d43f7348f8a93f30a5e1db751f",
+    "completed_at": "2025-10-19T11:02:29.036650",
+    "analysis_result": {
+      "should_mint": true,
+      "token_amount": 15.0,
+      "carbon_footprint": 0,
+      "reasoning": "MeTTa rule-based analysis: Carbon credits: 30.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.0",
+      "impact_score": 30.0,
+      "metta_analysis": {
+        "impact_score": 30.0,
+        "token_amount": 15.0,
+        "should_mint": true,
+        "sustainability_level": "insufficient",
+        "environmental_impact": "low",
+        "recommendation": "Insufficient data or impact. Please provide more detailed sustainability information.",
+        "reasoning": "MeTTa rule-based analysis: Carbon credits: 30.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.0",
+        "carbon_credits": 30.0,
+        "waste_bonus": 0.0,
+        "renewable_bonus": 0.0,
+        "document_multiplier": 1.0,
+        "method": "metta_docker",
+        "timestamp": "2025-10-19T11:02:29.269753"
+      }
+    },
+    "should_mint": true,
+    "token_amount": 15.0,
+    "reasoning": "MeTTa rule-based analysis: Carbon credits: 30.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.0",
+    "minting_results": {
+      "eco_tokens": {
+        "success": true,
+        "tx_hash": "0xeed9a0dbf2d14d16aec017e3c5e957af98724d3c832017b8da61a6c42a258910",
+        "amount": 15.0,
+        "amount_wei": 15000000000000000000,
+        "block_number": 9444766,
+        "gas_used": 207517
+      },
+      "sustainability_nft": {
+        "success": true,
+        "tx_hash": "0x5832bbb8bbc604ae11141a17eec1d1b465d650ba1f9a132b56e5013045a8b7ec",
+        "token_id": 25,
+        "proof_type": "sustainability_document",
+        "carbon_amount": 0,
+        "metadata_uri": "https://gateway.lighthouse.storage/ipfs/QmMock99bcf2d43f7348f8a93f30a5e1db751f",
+        "block_number": 9444767,
+        "gas_used": 35067
+      },
+      "proof_registry": {
+        "success": false,
+        "error": "500: Proof registration failed: \nABI Not Found!\nFound 1 element(s) named `registerProof` that accept 5 argument(s).\nThe provided arguments are not valid.\nProvided argument types: (address,str,int,str,str)\nProvided keyword argument types: {}\n\nTried to find a matching ABI element named `registerProof`, but encountered the following problems:\nSignature: registerProof(address,string,string,uint256,string), type: function\nArgument 1 value `0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD` is valid.\nArgument 2 value `sustainability_document` is valid.\nArgument 3 value `1000000000000000000` is not compatible with type `string`.\nArgument 4 value `https://gateway.lighthouse.storage/ipfs/QmMock99bcf2d43f7348f8a93f30a5e1db751f` is not compatible with type `uint256`.\nArgument 5 value `proof_99bcf2d4-3f73-48f8-a93f-30a5e1db751f` is valid.\n"
+      }
+    },
+    "transaction_details": {
+      "eco_token_tx": "0xeed9a0dbf2d14d16aec017e3c5e957af98724d3c832017b8da61a6c42a258910",
+      "nft_tx": "0x5832bbb8bbc604ae11141a17eec1d1b465d650ba1f9a132b56e5013045a8b7ec",
+      "nft_token_id": 25,
+      "proof_registry_tx": null,
+      "proof_id": null
+    }
+  },
+  "6daeeadd-c5df-4c4b-b194-2852ec7cde9e": {
+    "upload_id": "6daeeadd-c5df-4c4b-b194-2852ec7cde9e",
+    "filename": "test_data_new.json",
+    "content_type": "application/json",
+    "upload_type": "sustainability_document",
+    "user_wallet": "0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD",
+    "metadata": null,
+    "status": "completed",
+    "created_at": "2025-10-19T11:05:50.415002",
+    "file_size": 1105,
+    "cid": "QmMock6daeeaddc5df4c4bb1942852ec7cde9e",
+    "gateway_url": "https://gateway.lighthouse.storage/ipfs/QmMock6daeeaddc5df4c4bb1942852ec7cde9e",
+    "completed_at": "2025-10-19T11:05:51.452764",
+    "analysis_result": {
+      "should_mint": true,
+      "token_amount": 33.0,
+      "carbon_footprint": 0,
+      "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+      "impact_score": 67.5,
+      "metta_analysis": {
+        "impact_score": 67.5,
+        "token_amount": 33.0,
+        "should_mint": true,
+        "sustainability_level": "fair",
+        "environmental_impact": "low",
+        "recommendation": "Room for improvement. Consider implementing additional sustainability measures.",
+        "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+        "carbon_credits": 45.0,
+        "waste_bonus": 0.0,
+        "renewable_bonus": 0.0,
+        "document_multiplier": 1.5,
+        "method": "metta_docker",
+        "timestamp": "2025-10-19T11:05:51.545747"
+      }
+    },
+    "should_mint": true,
+    "token_amount": 33.0,
+    "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+    "minting_results": {
+      "eco_tokens": {
+        "success": true,
+        "tx_hash": "0x2953c7f720c1ef6dd5275996fa8eefab02df17f61db6facdaa4f452a3327e6ea",
+        "amount": 33.0,
+        "amount_wei": 33000000000000000000,
+        "block_number": 9444782,
+        "gas_used": 207529
+      },
+      "sustainability_nft": {
+        "success": true,
+        "tx_hash": "0x581eaee94f42109bc6ab67ece69edf6473fb379181f178dd50b6d64a881eab10",
+        "token_id": 25,
+        "proof_type": "sustainability_document",
+        "carbon_amount": 0,
+        "metadata_uri": "https://gateway.lighthouse.storage/ipfs/QmMock6daeeaddc5df4c4bb1942852ec7cde9e",
+        "block_number": 9444783,
+        "gas_used": 35067
+      },
+      "proof_registry": {
+        "success": false,
+        "error": "500: Proof registration failed: \nABI Not Found!\nFound 1 element(s) named `registerProof` that accept 5 argument(s).\nThe provided arguments are not valid.\nProvided argument types: (address,str,int,str,str)\nProvided keyword argument types: {}\n\nTried to find a matching ABI element named `registerProof`, but encountered the following problems:\nSignature: registerProof(address,string,string,uint256,string), type: function\nArgument 1 value `0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD` is valid.\nArgument 2 value `sustainability_document` is valid.\nArgument 3 value `1000000000000000000` is not compatible with type `string`.\nArgument 4 value `https://gateway.lighthouse.storage/ipfs/QmMock6daeeaddc5df4c4bb1942852ec7cde9e` is not compatible with type `uint256`.\nArgument 5 value `proof_6daeeadd-c5df-4c4b-b194-2852ec7cde9e` is valid.\n"
+      }
+    },
+    "transaction_details": {
+      "eco_token_tx": "0x2953c7f720c1ef6dd5275996fa8eefab02df17f61db6facdaa4f452a3327e6ea",
+      "nft_tx": "0x581eaee94f42109bc6ab67ece69edf6473fb379181f178dd50b6d64a881eab10",
+      "nft_token_id": 25,
+      "proof_registry_tx": null,
+      "proof_id": null
+    }
+  },
+  "5868087c-3750-4aee-94f9-5b6d07a1d161": {
+    "upload_id": "5868087c-3750-4aee-94f9-5b6d07a1d161",
+    "filename": "test_data_new.json",
+    "content_type": "application/json",
+    "upload_type": "sustainability_document",
+    "user_wallet": "0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD",
+    "metadata": null,
+    "status": "completed",
+    "created_at": "2025-10-19T11:16:13.632973",
+    "file_size": 1105,
+    "cid": "QmMock5868087c37504aee94f95b6d07a1d161",
+    "gateway_url": "https://gateway.lighthouse.storage/ipfs/QmMock5868087c37504aee94f95b6d07a1d161",
+    "completed_at": "2025-10-19T11:16:14.699255",
+    "analysis_result": {
+      "should_mint": true,
+      "token_amount": 33.0,
+      "carbon_footprint": 0,
+      "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+      "impact_score": 67.5,
+      "metta_analysis": {
+        "impact_score": 67.5,
+        "token_amount": 33.0,
+        "should_mint": true,
+        "sustainability_level": "fair",
+        "environmental_impact": "low",
+        "recommendation": "Room for improvement. Consider implementing additional sustainability measures.",
+        "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+        "carbon_credits": 45.0,
+        "waste_bonus": 0.0,
+        "renewable_bonus": 0.0,
+        "document_multiplier": 1.5,
+        "method": "metta_docker",
+        "timestamp": "2025-10-19T11:16:14.913140"
+      }
+    },
+    "should_mint": true,
+    "token_amount": 33.0,
+    "reasoning": "MeTTa rule-based analysis: Carbon credits: 45.0, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.5",
+    "minting_results": {
+      "eco_tokens": {
+        "success": true,
+        "tx_hash": "0x69083604b8abd7a13143e0f0aa2a2cd7af82c1ea7ace7072df9fee481a7b2b64",
+        "amount": 33.0,
+        "amount_wei": 33000000000000000000,
+        "block_number": 9444834,
+        "gas_used": 207529
+      },
+      "sustainability_nft": {
+        "success": true,
+        "tx_hash": "0xd186d1829a5b092c6664f51f2eaa2829cc6c2289e6f835697c6c08bb0e6f62bd",
+        "token_id": 25,
+        "proof_type": "sustainability_document",
+        "carbon_amount": 0,
+        "metadata_uri": "https://gateway.lighthouse.storage/ipfs/QmMock5868087c37504aee94f95b6d07a1d161",
+        "block_number": 9444835,
+        "gas_used": 35067
+      },
+      "proof_registry": {
+        "success": false,
+        "error": "500: Proof registration failed: \nABI Not Found!\nFound 1 element(s) named `registerProof` that accept 5 argument(s).\nThe provided arguments are not valid.\nProvided argument types: (address,str,int,str,str)\nProvided keyword argument types: {}\n\nTried to find a matching ABI element named `registerProof`, but encountered the following problems:\nSignature: registerProof(address,string,string,uint256,string), type: function\nArgument 1 value `0x6C2E94dB5c3B89D2bC765e5B5E47058aF5E92DdD` is valid.\nArgument 2 value `sustainability_document` is valid.\nArgument 3 value `1000000000000000000` is not compatible with type `string`.\nArgument 4 value `https://gateway.lighthouse.storage/ipfs/QmMock5868087c37504aee94f95b6d07a1d161` is not compatible with type `uint256`.\nArgument 5 value `proof_5868087c-3750-4aee-94f9-5b6d07a1d161` is valid.\n"
+      }
+    },
+    "transaction_details": {
+      "eco_token_tx": "0x69083604b8abd7a13143e0f0aa2a2cd7af82c1ea7ace7072df9fee481a7b2b64",
+      "nft_tx": "0xd186d1829a5b092c6664f51f2eaa2829cc6c2289e6f835697c6c08bb0e6f62bd",
+      "nft_token_id": 25,
+      "proof_registry_tx": null,
+      "proof_id": null
+    }
   }
 }

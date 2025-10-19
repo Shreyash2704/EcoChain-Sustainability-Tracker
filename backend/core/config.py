@@ -53,6 +53,8 @@ class Settings(BaseSettings):
     privy_app_secret: Optional[str] = Field(default=None, env="PRIVY_APP_SECRET")
     lighthouse_api_key: Optional[str] = Field(default=None, env="LIGHTHOUSE_API_KEY")
     metta_api_key: Optional[str] = Field(default=None, env="METTA_API_KEY")
+    openai_api_key: Optional[str] = Field(default=None, env="OPENAI_API_KEY")
+    openai_model: str = Field(default="gpt-4o-mini", env="OPENAI_MODEL")
     
     # MeTTa Configuration
     metta_path: str = Field(default="metta", env="METTA_PATH")

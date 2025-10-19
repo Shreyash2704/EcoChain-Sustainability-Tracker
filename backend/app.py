@@ -9,11 +9,15 @@ from agents.user_agent import user_agent
 from agents.verifier_agent import verifier_agent
 from agents.reasoner_agent import reasoner_agent
 from agents.minting_agent import minting_agent
+from agents.analytics_agent import analytics_agent
+from agents.upload_agent import upload_agent
+from agents.recommendation_agent import recommendation_agent
 import asyncio
 
 # Import API routers
 from api.uploads import router as uploads_router
 from api.analytics import router as analytics_router
+from api.chat import router as chat_router
 
 # Import core configuration and services
 from core.config import settings, is_development
@@ -40,6 +44,7 @@ app.add_middleware(
 # Include API routers
 app.include_router(uploads_router)
 app.include_router(analytics_router)
+app.include_router(chat_router)
 
 @app.get("/")
 async def root():
@@ -64,8 +69,8 @@ async def health_check():
         "debug": settings.debug
     }
 
-async def start_bureau():
-    """Start the uAgents Bureau with all agents"""
+def initialize_services():
+    """Initialize Web3Service and configure agents"""
     try:
         # Initialize Web3Service if configuration is available
         if settings.sepolia_rpc_url and settings.private_key:
@@ -75,6 +80,22 @@ async def start_bureau():
         else:
             logger.warning("⚠️ Web3Service not initialized - missing RPC URL or private key")
         
+        # Configure agent addresses for User Agent routing
+        from agents.user_agent import set_agent_addresses
+        set_agent_addresses(
+            analytics_agent.address,
+            upload_agent.address,
+            reasoner_agent.address,
+            recommendation_agent.address
+        )
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize services: {e}")
+        raise
+
+async def start_bureau():
+    """Start the uAgents Bureau with all agents"""
+    try:
         # Create and configure Bureau
         bureau = Bureau(port=settings.bureau_port)
         
@@ -83,6 +104,9 @@ async def start_bureau():
         bureau.add(verifier_agent)
         bureau.add(reasoner_agent)
         bureau.add(minting_agent)
+        bureau.add(analytics_agent)
+        bureau.add(upload_agent)
+        bureau.add(recommendation_agent)
         
         logger.info(f"🚀 Starting Bureau on port {settings.bureau_port}")
         await bureau.run_async()
@@ -92,6 +116,9 @@ async def start_bureau():
         raise
 
 if __name__ == "__main__":
+    # Initialize services (synchronous)
+    initialize_services()
+    
     # Start Bureau in background
     loop = asyncio.get_event_loop()
     loop.create_task(start_bureau())

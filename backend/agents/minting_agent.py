@@ -165,7 +165,9 @@ async def handle_minting_request(ctx: Context, sender: str, msg: ChatMessage):
         try:
             proof_id = f"proof_{upload_id}"
             metadata_uri = f"https://gateway.lighthouse.storage/ipfs/QmMock{upload_id.replace('-', '')[:40]}"
-            carbon_impact_wei = int(carbon_footprint * 10**18)
+            # Use a minimum carbon impact of 1 kg CO2 if carbon_footprint is 0
+            carbon_impact_kg = max(carbon_footprint, 1.0)
+            carbon_impact_wei = int(carbon_impact_kg * 10**18)
             
             registry_result = await web3_service.register_sustainability_proof(
                 user_address=user_wallet,
