@@ -426,11 +426,11 @@ class Web3Service:
             # Estimate gas for the transaction
             try:
                 estimated_gas = contract.functions.registerProof(
-                    user_address,
-                    proof_type,
-                    carbon_impact,
-                    metadata_uri,
-                    proof_id  # Using proof_id as ipfsCID
+                    user_address,      # user (address)
+                    proof_id,         # proofId (string)
+                    proof_type,       # proofType (string)
+                    carbon_impact,    # carbonImpact (uint256)
+                    metadata_uri      # metadataURI (string)
                 ).estimate_gas({'from': self.account.address})
                 gas_limit = int(estimated_gas * 1.2)  # Add 20% buffer
             except Exception as e:
@@ -444,11 +444,11 @@ class Web3Service:
             
             # Build transaction
             transaction = contract.functions.registerProof(
-                user_address,
-                proof_type,
-                carbon_impact,
-                metadata_uri,
-                proof_id  # Using proof_id as ipfsCID
+                user_address,      # user (address)
+                proof_id,          # proofId (string)
+                proof_type,        # proofType (string)
+                carbon_impact,     # carbonImpact (uint256)
+                metadata_uri       # metadataURI (string)
             ).build_transaction({
                 'from': self.account.address,
                 'gas': gas_limit,

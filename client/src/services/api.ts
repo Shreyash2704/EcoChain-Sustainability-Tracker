@@ -113,12 +113,12 @@ export const analyticsApi = {
   },
 
   getSystemOverview: async () => {
-    const response = await api.get('/analytics/overview');
+    const response = await api.get('/analytics/stats/overview');
     return response.data;
   },
 
-  getRecentActivity: async (limit = 20) => {
-    const response = await api.get(`/analytics/recent?limit=${limit}`);
+  getRecentActivity: async (walletAddress: string, limit = 20) => {
+    const response = await api.get(`/analytics/user/${walletAddress}/recent?limit=${limit}`);
     return response.data;
   },
 };

@@ -307,6 +307,64 @@ async def simulate_user_agent_response(request: ChatRequest) -> Dict[str, Any]:
                 "agent_name": "analytics_agent",
                 "success": True
             }
+    # Handle leaderboard/system-wide queries
+    elif any(word in message_lower for word in ["leaderboard", "top", "best", "who has", "which user", "total", "system", "all users", "everyone", "amount of credit minted"]):
+        print(f"🔍 DEBUG: Chat API - Detected system-wide query, calling system overview...")
+        
+        try:
+            from api.analytics import get_system_overview, get_leaderboard
+            
+            # Get system overview
+            system_data = await get_system_overview()
+            leaderboard_data = await get_leaderboard(limit=5)
+            
+            if system_data and "system_overview" in system_data:
+                overview = system_data["system_overview"]
+                total_users = overview.get("total_users", 0)
+                total_uploads = overview.get("total_uploads", 0)
+                total_credits = overview.get("total_credits_distributed", 0)
+                success_rate = overview.get("success_rate", 0)
+                
+                response_message = f"""🌍 **EcoChain System Overview**
+
+👥 **Total Users**: {total_users}
+📄 **Total Uploads**: {total_uploads}
+💰 **Total Credits Distributed**: {total_credits:.1f}
+✅ **System Success Rate**: {success_rate:.1f}%
+
+🏆 **Top Contributors**:"""
+                
+                if leaderboard_data and "top_users" in leaderboard_data:
+                    top_users = leaderboard_data["top_users"][:3]  # Top 3
+                    for i, user in enumerate(top_users, 1):
+                        wallet_short = user["user_wallet"][:6] + "..." + user["user_wallet"][-4:]
+                        credits = user.get("total_credits", 0)
+                        uploads = user.get("total_uploads", 0)
+                        response_message += f"\n{i}. {wallet_short}: {credits:.1f} credits ({uploads} uploads)"
+                
+                return {
+                    "message": response_message,
+                    "agent_name": "analytics_agent",
+                    "success": True,
+                    "data": {"system_overview": system_data, "leaderboard": leaderboard_data}
+                }
+            else:
+                return {
+                    "message": "❌ Unable to retrieve system data. Please try again later.",
+                    "agent_name": "analytics_agent",
+                    "success": False,
+                    "error": "System data not available"
+                }
+                
+        except Exception as e:
+            print(f"🔍 DEBUG: Chat API - System query error: {e}")
+            return {
+                "message": f"❌ Error retrieving system data: {str(e)}",
+                "agent_name": "analytics_agent",
+                "success": False,
+                "error": str(e)
+            }
+    
     elif any(word in message_lower for word in ["upload", "document", "file"]):
         return {
             "message": "📤 Please upload your sustainability document using the file upload button or drag and drop a JSON file here.",
@@ -333,8 +391,26 @@ async def simulate_user_agent_response(request: ChatRequest) -> Dict[str, Any]:
         }
     else:
         return {
-            "message": "🌱 I'm here to help with your sustainability tracking! You can ask me about:\n\n• Your carbon credits and token balance\n• Upload sustainability documents for analysis\n• Get recommendations to improve your sustainability score\n\nWhat would you like to know?",
-            "data": {},
+            "message": f"""🤔 **I'm not sure how to help with that**
+
+I received: "{request.message}"
+
+**I can help you with:**
+• 📊 **Your analytics**: "How much credits do I have?"
+• 🌍 **System info**: "Who has the most credits?" or "Show me the leaderboard"
+• 📄 **Uploads**: "Help me upload a document" or "What should I upload?"
+• 💡 **Recommendations**: "How can I improve my sustainability?"
+• ❓ **General help**: "What can you do?" or "How does this work?"
+
+Could you rephrase your question or ask about one of these topics?""",
+            "data": {
+                "capabilities": [
+                    "Check credits and tokens",
+                    "Upload documents", 
+                    "Get recommendations",
+                    "View analytics"
+                ]
+            },
             "agent_name": "user_agent",
             "success": True
         }
