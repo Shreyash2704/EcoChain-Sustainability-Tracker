@@ -1,0 +1,37 @@
+{
+  "document_type": "waste_management",
+  "title": "Waste Reduction and Recycling Program",
+  "organization": "Eco-Friendly Retail Chain",
+  "program_start_date": "2024-01-01",
+  "sustainability_metrics": {
+    "carbon_footprint": 75.2,
+    "energy_consumption": 1200,
+    "waste_reduction": 45.8,
+    "renewable_energy_percentage": 70.0,
+    "waste_reduction_percentage": 60.0,
+    "recycling_rate": 85.0,
+    "composting_rate": 40.0,
+    "landfill_diversion": 80.0
+  },
+  "waste_categories": {
+    "organic_waste": 35.0,
+    "recyclable_materials": 45.0,
+    "hazardous_waste": 5.0,
+    "landfill_waste": 15.0
+  },
+  "reduction_initiatives": [
+    "Composting program",
+    "Plastic-free packaging",
+    "Donation programs",
+    "Supplier waste reduction"
+  ],
+  "achievements": {
+    "waste_reduced_tons": 25.5,
+    "recycling_increased": 30.0,
+    "cost_savings": 12000
+  },
+  "certifications": [
+    "Zero Waste to Landfill",
+    "Green Business Certified"
+  ]
+}

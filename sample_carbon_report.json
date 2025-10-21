@@ -1,0 +1,30 @@
+{
+  "document_type": "carbon_report",
+  "title": "Carbon Footprint Assessment",
+  "organization": "Green Manufacturing Co.",
+  "assessment_date": "2024-01-15",
+  "sustainability_metrics": {
+    "carbon_footprint": 320.8,
+    "energy_consumption": 4500,
+    "waste_reduction": 28.5,
+    "renewable_energy_percentage": 65.0,
+    "waste_reduction_percentage": 35.0,
+    "scope_1_emissions": 120.5,
+    "scope_2_emissions": 85.3,
+    "scope_3_emissions": 115.0
+  },
+  "emission_sources": {
+    "manufacturing": 180.2,
+    "transportation": 45.6,
+    "energy_consumption": 95.0
+  },
+  "reduction_strategies": [
+    "Process optimization",
+    "Renewable energy adoption",
+    "Supply chain optimization",
+    "Employee training programs"
+  ],
+  "baseline_year": 2020,
+  "baseline_emissions": 450.0,
+  "reduction_achieved": 28.7
+}

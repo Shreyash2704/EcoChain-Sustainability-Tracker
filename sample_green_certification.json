@@ -1,0 +1,42 @@
+{
+  "document_type": "green_certification",
+  "title": "LEED Platinum Building Certification",
+  "organization": "Sustainable Architecture Firm",
+  "certification_date": "2024-03-10",
+  "sustainability_metrics": {
+    "carbon_footprint": 45.8,
+    "energy_consumption": 800,
+    "waste_reduction": 35.0,
+    "renewable_energy_percentage": 100.0,
+    "waste_reduction_percentage": 75.0,
+    "water_efficiency": 90.0,
+    "indoor_air_quality": 95.0,
+    "sustainable_materials": 85.0
+  },
+  "certification_details": {
+    "certification_type": "LEED Platinum",
+    "certifying_body": "USGBC",
+    "score_achieved": 85,
+    "points_earned": 85,
+    "total_possible": 100
+  },
+  "sustainable_features": [
+    "Net-zero energy building",
+    "Rainwater harvesting system",
+    "Green roof installation",
+    "Solar panel array",
+    "Geothermal heating",
+    "Natural ventilation"
+  ],
+  "performance_metrics": {
+    "energy_use_intensity": 25,
+    "water_use_reduction": 40,
+    "renewable_energy_percentage": 100,
+    "waste_diverted": 90
+  },
+  "innovation_credits": [
+    "Carbon neutral operations",
+    "Living building challenge",
+    "Biophilic design elements"
+  ]
+}

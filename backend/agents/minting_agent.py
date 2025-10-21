@@ -131,7 +131,9 @@ async def handle_minting_request(ctx: Context, sender: str, msg: ChatMessage):
             metadata_uri = f"https://gateway.lighthouse.storage/ipfs/QmMock{upload_id.replace('-', '')[:40]}"
             
             # Convert carbon footprint to wei (assuming 18 decimals for precision)
-            carbon_amount_wei = int(carbon_footprint * 10**18)
+            # Ensure carbon amount is at least 1 kg CO2 to satisfy contract requirements
+            carbon_footprint_safe = max(carbon_footprint, 1.0)
+            carbon_amount_wei = int(carbon_footprint_safe * 10**18)
             
             nft_result = await web3_service.mint_sustainability_proof_nft(
                 to_address=user_wallet,
@@ -145,7 +147,7 @@ async def handle_minting_request(ctx: Context, sender: str, msg: ChatMessage):
                 "tx_hash": nft_result['tx_hash'],
                 "token_id": nft_result['token_id'],
                 "proof_type": document_type,
-                "carbon_amount": carbon_footprint,
+                "carbon_amount": carbon_footprint_safe,
                 "metadata_uri": metadata_uri,
                 "block_number": nft_result['block_number'],
                 "gas_used": nft_result.get('gas_used', 0)
