@@ -33,6 +33,27 @@ analytics_agent = Agent(
     seed="analytics_agent_seed_phrase_for_ecochain_sustainability_tracker"
 )
 
+# Agentverse metadata for agent discovery
+analytics_agent.agentverse_metadata = {
+    "name": "EcoChain Analytics Agent",
+    "description": "Provides user analytics, leaderboards, and system statistics for sustainability tracking",
+    "capabilities": [
+        "user_analytics",
+        "leaderboard_generation",
+        "statistics",
+        "credit_tracking",
+        "nft_analytics",
+        "system_overview"
+    ],
+    "protocols": ["uAgents", "HTTP"],
+    "version": "1.0.0",
+    "endpoints": {
+        "analytics": "/agents/analytics/query",
+        "health": "/agents/analytics/health"
+    },
+    "tags": ["analytics", "statistics", "leaderboard", "credits", "sustainability"]
+}
+
 @analytics_agent.on_message(model=AnalyticsRequest)
 async def handle_analytics_request(ctx: Context, sender: str, msg: AnalyticsRequest):
     """

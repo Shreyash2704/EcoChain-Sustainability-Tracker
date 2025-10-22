@@ -20,6 +20,27 @@ minting_agent = Agent(
     port=8004
 )
 
+# Agentverse metadata for agent discovery
+minting_agent.agentverse_metadata = {
+    "name": "EcoChain Minting Agent",
+    "description": "Handles ECO token minting and NFT creation for sustainability proofs on the blockchain",
+    "capabilities": [
+        "token_minting",
+        "nft_creation",
+        "blockchain_transactions",
+        "proof_registration",
+        "gas_estimation",
+        "transaction_signing"
+    ],
+    "protocols": ["uAgents", "HTTP"],
+    "version": "1.0.0",
+    "endpoints": {
+        "mint": "/agents/minting/mint",
+        "health": "/agents/minting/health"
+    },
+    "tags": ["blockchain", "minting", "nft", "tokens", "sustainability"]
+}
+
 logger = get_logger(__name__)
 
 @minting_agent.on_message(model=ChatMessage)

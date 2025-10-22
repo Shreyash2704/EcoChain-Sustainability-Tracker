@@ -40,6 +40,26 @@ user_agent = Agent(
     seed="user_agent_seed_phrase_for_ecochain_sustainability_tracker"
 )
 
+# Agentverse metadata for agent discovery
+user_agent.agentverse_metadata = {
+    "name": "EcoChain User Agent",
+    "description": "Orchestrates user interactions and routes requests to specialized agents for sustainability tracking",
+    "capabilities": [
+        "intent_classification",
+        "user_routing", 
+        "chat_management",
+        "sustainability_guidance",
+        "multi_agent_coordination"
+    ],
+    "protocols": ["uAgents", "HTTP"],
+    "version": "1.0.0",
+    "endpoints": {
+        "chat": "/agents/user/chat",
+        "health": "/agents/user/health"
+    },
+    "tags": ["sustainability", "orchestration", "ai", "chat"]
+}
+
 # Agent addresses (will be set when other agents are created)
 analytics_agent_address = None
 upload_agent_address = None
@@ -71,6 +91,8 @@ async def handle_user_message(ctx: Context, sender: str, msg: ChatMessage):
             response = await route_to_reasoner_agent(ctx, msg, extracted_data)
         elif intent == "get_recommendations":
             response = await route_to_recommendation_agent(ctx, msg, extracted_data)
+        elif intent == "blockchain_query":
+            response = await handle_blockchain_query(msg, extracted_data)
         else:
             response = await handle_general_query(msg, extracted_data)
         
@@ -140,6 +162,12 @@ async def fallback_intent_classification(message: str) -> Dict[str, Any]:
         return {
             "intent": "get_recommendations",
             "confidence": 0.7,
+            "extracted_data": {}
+        }
+    elif any(word in message_lower for word in ["transaction", "tx", "hash", "block", "nft", "token", "balance", "explorer"]):
+        return {
+            "intent": "blockchain_query",
+            "confidence": 0.8,
             "extracted_data": {}
         }
     else:
@@ -269,10 +297,138 @@ async def route_to_recommendation_agent(ctx: Context, msg: ChatMessage, extracte
             error=str(e)
         )
 
+async def handle_blockchain_query(msg: ChatMessage, extracted_data: Dict[str, Any]) -> ChatResponse:
+    """Handle blockchain-related queries using MCP service"""
+    try:
+        from services.blockscout_mcp_service import query_blockchain_data
+        
+        message_lower = msg.message.lower()
+        wallet_address = msg.wallet_address
+        
+        # Determine query type based on message content
+        if any(word in message_lower for word in ["transaction", "tx", "hash"]):
+            # Extract transaction hash from message
+            import re
+            tx_hash_match = re.search(r'0x[a-fA-F0-9]{64}', msg.message)
+            if tx_hash_match:
+                tx_hash = tx_hash_match.group()
+                result = await query_blockchain_data("transaction", tx_hash=tx_hash)
+                
+                if result["status"] == "success":
+                    tx = result["transaction"]
+                    response_message = f"🔍 **Transaction Details**\n\n"
+                    response_message += f"**Hash:** `{tx['hash']}`\n"
+                    response_message += f"**From:** `{tx['from']}`\n"
+                    response_message += f"**To:** `{tx['to']}`\n"
+                    response_message += f"**Value:** {int(tx['value']) / 1e18:.6f} ETH\n"
+                    response_message += f"**Gas Used:** {int(tx['gas_used']):,}\n"
+                    response_message += f"**Block:** #{tx['block_number']:,}\n"
+                    response_message += f"**Status:** {tx['status']}\n"
+                    response_message += f"**Confirmations:** {tx['confirmations']}\n\n"
+                    response_message += f"🔗 [View on Explorer]({result['explorer_url']})"
+                    
+                    return ChatResponse(
+                        message=response_message,
+                        data=result,
+                        agent_name="user_agent",
+                        success=True
+                    )
+                else:
+                    return ChatResponse(
+                        message=f"❌ {result['message']}",
+                        agent_name="user_agent",
+                        success=False,
+                        error=result['message']
+                    )
+            else:
+                return ChatResponse(
+                    message="Please provide a valid transaction hash (0x...) to look up transaction details.",
+                    agent_name="user_agent",
+                    success=False,
+                    error="No transaction hash found in message"
+                )
+        
+        elif any(word in message_lower for word in ["balance", "token"]):
+            # Query token balance
+            result = await query_blockchain_data("token_balance", 
+                                               address=wallet_address,
+                                               token_address="0x...")  # ECO token address
+            
+            if result["status"] == "success":
+                balance = result["balance"]
+                response_message = f"💰 **Token Balance**\n\n"
+                response_message += f"**Address:** `{balance['address']}`\n"
+                response_message += f"**Token:** {balance['name']} ({balance['symbol']})\n"
+                response_message += f"**Balance:** {balance['balance_formatted']} {balance['symbol']}\n\n"
+                response_message += f"🔗 [View on Explorer]({result['explorer_url']})"
+                
+                return ChatResponse(
+                    message=response_message,
+                    data=result,
+                    agent_name="user_agent",
+                    success=True
+                )
+            else:
+                return ChatResponse(
+                    message=f"❌ {result['message']}",
+                    agent_name="user_agent",
+                    success=False,
+                    error=result['message']
+                )
+        
+        elif any(word in message_lower for word in ["nft", "collection"]):
+            # Query NFT collection
+            result = await query_blockchain_data("nft_collection",
+                                               address=wallet_address,
+                                               contract_address="0x...")  # NFT contract address
+            
+            if result["status"] == "success":
+                collection = result["collection"]
+                response_message = f"🎨 **NFT Collection**\n\n"
+                response_message += f"**Owner:** `{collection['owner']}`\n"
+                response_message += f"**Total NFTs:** {collection['total_nfts']}\n\n"
+                
+                if collection['nfts']:
+                    response_message += "**Recent NFTs:**\n"
+                    for nft in collection['nfts'][:3]:  # Show first 3 NFTs
+                        response_message += f"• {nft['name']} (ID: {nft['token_id']})\n"
+                
+                response_message += f"\n🔗 [View on Explorer]({result['explorer_url']})"
+                
+                return ChatResponse(
+                    message=response_message,
+                    data=result,
+                    agent_name="user_agent",
+                    success=True
+                )
+            else:
+                return ChatResponse(
+                    message=f"❌ {result['message']}",
+                    agent_name="user_agent",
+                    success=False,
+                    error=result['message']
+                )
+        
+        else:
+            return ChatResponse(
+                message="I can help you with blockchain queries! Try asking about:\n\n• Transaction details: 'Show me transaction 0x...'\n• Token balance: 'What's my token balance?'\n• NFT collection: 'Show my NFTs'\n• Recent transactions: 'Show my recent transactions'",
+                agent_name="user_agent",
+                success=True
+            )
+    
+    except Exception as e:
+        logger.error(f"❌ Error in blockchain query: {e}")
+        return ChatResponse(
+            message="Sorry, I couldn't process your blockchain query. Please try again.",
+            agent_name="user_agent",
+            success=False,
+            error=str(e)
+        )
+
 async def handle_general_query(msg: ChatMessage, extracted_data: Dict[str, Any]) -> ChatResponse:
     """Handle general sustainability queries"""
     return ChatResponse(
-        message="I'm here to help with your sustainability tracking! You can ask me about:\n\n• Your carbon credits and token balance\n• Upload sustainability documents for analysis\n• Calculate what metrics you need for target credits\n• Get recommendations to improve your sustainability score\n\nWhat would you like to know?",
+        message="I'm here to help with your sustainability tracking! You can ask me about:\n\n• Your carbon credits and token balance\n• Upload sustainability documents for analysis\n• Calculate what metrics you need for target credits\n• Get recommendations to improve your sustainability score\n• Blockchain queries: transactions, NFTs, balances\n\nWhat would you like to know?",
         agent_name="user_agent",
         success=True
     )

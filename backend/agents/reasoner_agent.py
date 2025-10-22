@@ -12,6 +12,27 @@ reasoner_agent = Agent(
     port=8003
 )
 
+# Agentverse metadata for agent discovery
+reasoner_agent.agentverse_metadata = {
+    "name": "EcoChain Reasoner Agent",
+    "description": "Analyzes sustainability documents using MeTTa reasoning engine to calculate carbon impact and environmental metrics",
+    "capabilities": [
+        "sustainability_analysis",
+        "carbon_footprint_calculation", 
+        "impact_assessment",
+        "document_processing",
+        "meTTa_reasoning",
+        "environmental_metrics"
+    ],
+    "protocols": ["uAgents", "HTTP"],
+    "version": "1.0.0",
+    "endpoints": {
+        "analyze": "/agents/reasoner/analyze",
+        "health": "/agents/reasoner/health"
+    },
+    "tags": ["sustainability", "reasoning", "meTTa", "carbon", "analysis"]
+}
+
 # Handle reasoning requests from verifier agent
 @reasoner_agent.on_message(model=ChatMessage)
 async def handle_verifier_data(ctx: Context, sender: str, msg: ChatMessage):

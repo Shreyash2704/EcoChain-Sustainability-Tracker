@@ -60,6 +60,11 @@ class Settings(BaseSettings):
     metta_path: str = Field(default="metta", env="METTA_PATH")
     metta_wrapper_url: Optional[str] = Field(default=None, env="METTA_WRAPPER_URL")
     
+    # Agentverse Configuration
+    agentverse_api_key: Optional[str] = Field(default=None, env="AGENTVERSE_API_KEY")
+    agentverse_enabled: bool = Field(default=True, env="AGENTVERSE_ENABLED")
+    agentverse_base_url: str = Field(default="https://agentverse.ai", env="AGENTVERSE_BASE_URL")
+    
     # Database Configuration
     database_url: Optional[str] = Field(default=None, env="DATABASE_URL")
     

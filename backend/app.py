@@ -18,11 +18,13 @@ import asyncio
 from api.uploads import router as uploads_router
 from api.analytics import router as analytics_router
 from api.chat import router as chat_router
+from api.blockscout import router as blockscout_router
 
 # Import core configuration and services
 from core.config import settings, is_development
 from core.logging import get_logger
 from services.web3_service import initialize_web3_service
+from services.agentverse_service import register_all_agents, get_agentverse_service
 
 logger = get_logger(__name__)
 
@@ -45,6 +47,7 @@ app.add_middleware(
 app.include_router(uploads_router)
 app.include_router(analytics_router)
 app.include_router(chat_router)
+app.include_router(blockscout_router)
 
 @app.get("/")
 async def root():
@@ -93,9 +96,36 @@ def initialize_services():
         logger.error(f"❌ Failed to initialize services: {e}")
         raise
 
+async def initialize_agentverse():
+    """Initialize Agentverse integration and register agents"""
+    try:
+        if settings.agentverse_enabled:
+            logger.info("🌐 Initializing Agentverse integration...")
+            agentverse_service = await get_agentverse_service()
+            
+            if await agentverse_service.is_available():
+                registered_agents = await register_all_agents()
+                if registered_agents:
+                    logger.info(f"✅ Registered {len(registered_agents)} agents on Agentverse")
+                    for agent_name, agent_address in registered_agents.items():
+                        logger.info(f"   • {agent_name}: {agent_address}")
+                else:
+                    logger.warning("⚠️ No agents registered on Agentverse")
+            else:
+                logger.warning("⚠️ Agentverse service not available")
+        else:
+            logger.info("ℹ️ Agentverse integration disabled")
+            
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize Agentverse: {e}")
+        # Don't raise - Agentverse is optional
+
 async def start_bureau():
     """Start the uAgents Bureau with all agents"""
     try:
+        # Initialize Agentverse integration
+        await initialize_agentverse()
+        
         # Create and configure Bureau
         bureau = Bureau(port=settings.bureau_port)
         
