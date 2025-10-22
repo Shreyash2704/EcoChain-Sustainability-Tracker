@@ -92,7 +92,7 @@ Individuals and small organisations want to measure and get rewarded for sustain
 * Entry point for user interactions from the chat UI
 * Manages sessions, permissions (consent) and routes tasks to other agents
 
-### DocumentScannerAgent
+### DocumentScannerAgent (To Be Implmented in Future)
 
 * Parses uploaded files (PDF/image) using OCR or accepts structured JSON (MVP)
 * Produces cleaned data: `{ provider, date, kWh, meter_id, ... }`
@@ -190,29 +190,6 @@ npx hardhat run scripts/deploy.js --network <network>
 
 ---
 
-## Environment Variables (example `.env`)
-
-```
-# General
-APP_HOST=https://your-app.example
-PORT=8000
-
-# IPFS / Pinata
-PINATA_API_KEY=your_pinata_key
-PINATA_SECRET=your_pinata_secret
-
-# Web3 / RPC
-RPC_URL=https://rpc.fetch.ai
-PRIVATE_KEY=0x...
-CONTRACT_ADDRESS=0x...
-
-# ASI / Agentverse
-AGENTVERSE_API_KEY=your_agentverse_key
-ASI_API_ENDPOINT=https://asi1.ai/api
-```
-
----
-
 ## MeTTa Rules (Example)
 
 Below is a brief pseudo‑MeTTa snippet demonstrating an emission factor rule. Implement these in the MeTTa program used by the `MeTTa ReasonerAgent`.
@@ -285,17 +262,5 @@ See Fetch.ai docs for exact API calls and required manifest format.
 
 ---
 
-## License
 
-This project is released under the MIT License. See `LICENSE`.
 
----
-
-## Contact
-
-Project lead: **You** (update README with your contact/email/links).
-Questions or feature ideas? Create an issue in this repo.
-
----
-
-*Generated for the EcoChain project to support development, demo, and hackathon submission. Modify as needed for your final repo and presentation.*
