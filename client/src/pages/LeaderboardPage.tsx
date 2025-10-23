@@ -3,7 +3,6 @@ import {
   Trophy, 
   Medal, 
   Award, 
-  TrendingUp, 
   Users, 
   FileText,
   Coins,

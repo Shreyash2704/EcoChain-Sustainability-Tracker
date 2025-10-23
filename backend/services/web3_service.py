@@ -262,7 +262,7 @@ class Web3Service:
             signed_txn = self.w3.eth.account.sign_transaction(transaction, self.private_key)
             tx_hash = self.w3.eth.send_raw_transaction(signed_txn.raw_transaction)
             
-            print(f"⛽ Transaction sent with gas price: {gas_price} wei ({gas_price / 1e9:.2f} Gwei)")
+            print(f"Transaction sent with gas price: {gas_price} wei ({gas_price / 1e9:.2f} Gwei)")
             
             # Wait for transaction receipt with longer timeout
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)  # 5 minutes
@@ -348,7 +348,7 @@ class Web3Service:
             signed_txn = self.w3.eth.account.sign_transaction(transaction, self.private_key)
             tx_hash = self.w3.eth.send_raw_transaction(signed_txn.raw_transaction)
             
-            print(f"⛽ NFT Transaction sent with gas price: {gas_price} wei ({gas_price / 1e9:.2f} Gwei)")
+            print(f"NFT Transaction sent with gas price: {gas_price} wei ({gas_price / 1e9:.2f} Gwei)")
             
             # Wait for transaction receipt with longer timeout
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)  # 5 minutes

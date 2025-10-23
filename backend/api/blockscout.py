@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/blockscout", tags=["blockscout"])
 
 # Blockscout API configuration
-BLOCKSCOUT_BASE_URL = "https://sepolia.blockscout.com"
+BLOCKSCOUT_BASE_URL = "https://eth-sepolia.blockscout.com"
 
 @router.get("/transaction/{tx_hash}")
 async def get_transaction(tx_hash: str):
@@ -39,7 +39,7 @@ async def get_transaction(tx_hash: str):
                     "timestamp": current_time,
                     "status": "confirmed",
                     "confirmations": 12,
-                    "explorer_url": f"https://sepolia.blockscout.com/tx/{tx_hash}"
+                    "explorer_url": f"https://eth-sepolia.blockscout.com/tx/{tx_hash}"
                 }
             
             if not response.is_success:
@@ -49,7 +49,10 @@ async def get_transaction(tx_hash: str):
                 )
             
             data = response.json()
-            
+            print("##################################")
+            print("data",data)
+            print("_____________________________________")
+            print('data status',data.get('status'))
             # Format the response for frontend consumption
             return {
                 "hash": data.get("hash", ""),
@@ -60,9 +63,9 @@ async def get_transaction(tx_hash: str):
                 "gas_price": data.get("gas_price", "0"),
                 "block_number": data.get("block_number", 0),
                 "timestamp": data.get("timestamp", ""),
-                "status": "confirmed" if data.get("status") == "success" else "failed",
+                "status": "confirmed" if data.get("status") in ["success", "ok"] else "failed",
                 "confirmations": data.get("confirmations", 0),
-                "explorer_url": f"https://sepolia.blockscout.com/tx/{tx_hash}"
+                "explorer_url": f"https://eth-sepolia.blockscout.com/tx/{tx_hash}"
             }
             
     except httpx.TimeoutException:

@@ -1,5 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useUserAnalytics, useRecentActivity } from '../hooks/useApi';
+import NFTGallery from '../components/NFTGallery';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -7,8 +8,6 @@ import {
   Coins, 
   Award,
   Activity,
-  Calendar,
-  ExternalLink,
   Loader2,
   AlertCircle,
   Upload,
@@ -21,7 +20,7 @@ export default function DashboardPage() {
   const walletAddress = user?.wallet?.address || '';
   
   const { data: analytics, isLoading: analyticsLoading, error: analyticsError } = useUserAnalytics(walletAddress);
-  const { data: recentActivity, isLoading: activityLoading } = useRecentActivity(walletAddress, 10);
+  const { data: recentActivity } = useRecentActivity(walletAddress, 10);
 
   if (!authenticated) {
     return (
@@ -235,6 +234,24 @@ export default function DashboardPage() {
                     </span>
                   </div>
                 </div>
+                
+                {/* IPFS Link */}
+                {upload.ipfs_url && (
+                  <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">Document:</span>
+                      <a 
+                        href={upload.ipfs_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-eco-600 dark:text-eco-400 hover:text-eco-700 dark:hover:text-eco-300 underline flex items-center space-x-1"
+                      >
+                        <FileText className="w-4 h-4" />
+                        <span>View on IPFS</span>
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -265,6 +282,16 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* NFT Gallery */}
+      {analytics?.sustainability_proof_address && (
+        <div className="card">
+          <NFTGallery
+            walletAddress={walletAddress}
+            contractAddress={analytics.sustainability_proof_address}
+          />
         </div>
       )}
 

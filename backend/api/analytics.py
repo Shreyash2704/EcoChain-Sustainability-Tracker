@@ -79,7 +79,7 @@ async def get_user_analytics(user_wallet: str):
                 "ipfs_cid": upload.get("cid"),
                 "ipfs_url": upload.get("gateway_url"),
                 "credits_earned": upload.get("token_amount", 0),
-                "impact_score": upload.get("impact_score", 0),
+                "impact_score": upload.get("analysis_result", {}).get("impact_score", 0),
                 "should_mint": upload.get("should_mint", False),
                 "status": upload.get("status"),
                 "metadata": upload.get("metadata", {})

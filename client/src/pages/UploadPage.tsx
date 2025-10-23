@@ -1,14 +1,13 @@
 import { useState, useCallback } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useUploadFile } from '../hooks/useApi';
+import TransactionStatus from '../components/TransactionStatus';
 import { 
   Upload, 
   CheckCircle, 
   AlertCircle, 
   Loader2,
   Download,
-  ExternalLink,
-  Copy,
   Leaf,
   Coins,
   Award
@@ -112,9 +111,6 @@ export default function UploadPage() {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-  };
 
   if (!authenticated) {
     return (
@@ -262,28 +258,14 @@ export default function UploadPage() {
                   )}
                 </div>
                 {uploadResult.blockchain_transactions.eco_token_minting.tx_hash ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">Transaction:</span>
-                      <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                        {uploadResult.blockchain_transactions.eco_token_minting.tx_hash}
-                      </code>
-                      <button
-                        onClick={() => copyToClipboard(uploadResult.blockchain_transactions.eco_token_minting.tx_hash)}
-                        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                      >
-                        <Copy className="w-3 h-3" />
-                      </button>
+                  <div className="space-y-3">
+                    <TransactionStatus
+                      txHash={uploadResult.blockchain_transactions.eco_token_minting.tx_hash}
+                      showDetails={true}
+                    />
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      Amount: {uploadResult.blockchain_transactions.eco_token_minting.amount} ECO tokens
                     </div>
-                    <a
-                      href={uploadResult.blockchain_transactions.eco_token_minting.explorer_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-1 text-eco-600 hover:text-eco-700 text-sm"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                      <span>View on Explorer</span>
-                    </a>
                   </div>
                 ) : (
                   <p className="text-red-600 text-sm">Token minting failed</p>
@@ -301,34 +283,14 @@ export default function UploadPage() {
                   )}
                 </div>
                 {uploadResult.blockchain_transactions.nft_minting.tx_hash ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">Token ID:</span>
-                      <span className="font-mono text-sm">
-                        #{uploadResult.blockchain_transactions.nft_minting.token_id}
-                      </span>
+                  <div className="space-y-3">
+                    <TransactionStatus
+                      txHash={uploadResult.blockchain_transactions.nft_minting.tx_hash}
+                      showDetails={true}
+                    />
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      Token ID: #{uploadResult.blockchain_transactions.nft_minting.token_id}
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">Transaction:</span>
-                      <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                        {uploadResult.blockchain_transactions.nft_minting.tx_hash}
-                      </code>
-                      <button
-                        onClick={() => copyToClipboard(uploadResult.blockchain_transactions.nft_minting.tx_hash)}
-                        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                      >
-                        <Copy className="w-3 h-3" />
-                      </button>
-                    </div>
-                    <a
-                      href={uploadResult.blockchain_transactions.nft_minting.explorer_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-1 text-eco-600 hover:text-eco-700 text-sm"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                      <span>View on Explorer</span>
-                    </a>
                   </div>
                 ) : (
                   <p className="text-red-600 text-sm">NFT minting failed</p>
