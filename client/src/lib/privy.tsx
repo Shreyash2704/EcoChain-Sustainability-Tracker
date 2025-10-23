@@ -29,12 +29,11 @@ export const privyConfig = {
   config: {
     // Customize the appearance of the login modal
     appearance: {
-      theme: 'light',
-      accentColor: '#22c55e', // Eco green
-      logo: 'https://your-logo-url.com/logo.png',
+      theme: 'light' as const,
+      accentColor: '#22c55e' as const, // Eco green
     },
     // Configure login methods
-    loginMethods: ['email', 'wallet', 'google', 'twitter'],
+    loginMethods: ['email', 'wallet'],
     // Configure embedded wallets
     embeddedWallets: {
       createOnLogin: 'users-without-wallets',
@@ -42,7 +41,7 @@ export const privyConfig = {
     // Configure supported chains
     defaultChain: sepolia,
     supportedChains: [sepolia],
-  },
+  } as any,
 };
 
 // Provider wrapper component

@@ -130,7 +130,7 @@ export const useUploadFile = () => {
       });
       // Invalidate recent activity
       queryClient.invalidateQueries({
-        queryKey: queryKeys.recentActivity(20),
+        queryKey: queryKeys.recentActivity('', 20),
       });
     },
   });

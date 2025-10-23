@@ -8,7 +8,6 @@ import {
   Bot, 
   User, 
   Loader2,
-  FileText,
   AlertCircle
 } from 'lucide-react';
 
@@ -242,7 +241,7 @@ export default function ChatPage() {
               <Upload className="w-4 h-4" />
             </label>
             <button
-              onClick={handleSendMessage}
+              onClick={() => handleSendMessage()}
               disabled={!input.trim() || isLoading}
               className="btn-primary p-2"
             >
