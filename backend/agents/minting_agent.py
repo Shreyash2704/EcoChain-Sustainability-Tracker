@@ -148,8 +148,74 @@ async def handle_minting_request(ctx: Context, sender: str, msg: ChatMessage):
         # 2. Mint SustainabilityProof NFT
         print(f"🎨 Minting SustainabilityProof NFT...")
         try:
-            # Create metadata URI for the NFT
-            metadata_uri = f"https://gateway.lighthouse.storage/ipfs/QmMock{upload_id.replace('-', '')[:40]}"
+            # Create proper JSON metadata for the NFT
+            nft_metadata = {
+                "name": f"Sustainability Proof #{upload_id[:8]}",
+                "description": f"Sustainability proof for {document_type} with {carbon_footprint} kg CO2 impact",
+                "image": f"https://gateway.lighthouse.storage/ipfs/{upload_id}",  # Use real IPFS CID
+                "attributes": [
+                    {
+                        "trait_type": "Document Type",
+                        "value": document_type
+                    },
+                    {
+                        "trait_type": "Carbon Impact",
+                        "value": f"{carbon_footprint} kg CO2"
+                    },
+                    {
+                        "trait_type": "Upload Date",
+                        "value": datetime.utcnow().isoformat()
+                    },
+                    {
+                        "trait_type": "Verified",
+                        "value": "True"
+                    }
+                ],
+                "external_url": f"https://eth-sepolia.blockscout.com/token/0x17874E9d6e22bf8025Fe7473684e50f36472CCd2/instance/{upload_id}",
+                "background_color": "22c55e",
+                "animation_url": None
+            }
+            
+            # Upload metadata to IPFS
+            from services.lighthouse_service import LighthouseService
+            from core.config import get_settings
+            import tempfile
+            import os
+            from fastapi import UploadFile
+            from io import BytesIO
+            
+            settings = get_settings()
+            lighthouse_service = LighthouseService(settings.lighthouse_api_key or settings.lighthouse_apiKey)
+            
+            # Create a temporary file with the metadata
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as temp_file:
+                json.dump(nft_metadata, temp_file, indent=2)
+                temp_file_path = temp_file.name
+            
+            try:
+                # Upload to IPFS
+                with open(temp_file_path, 'rb') as f:
+                    file_content = f.read()
+                    file_obj = BytesIO(file_content)
+                    
+                    metadata_file = UploadFile(
+                        filename=f"metadata_{upload_id}.json",
+                        file=file_obj
+                    )
+                    metadata_file.headers = {"content-type": "application/json"}
+                    
+                    ipfs_result = await lighthouse_service.upload_file(metadata_file, pin=True)
+                    metadata_uri = ipfs_result['gateway_url']
+                    
+            except Exception as e:
+                print(f"⚠️ Lighthouse upload failed, using fallback metadata URI: {e}")
+                # Fallback to a demo metadata URI
+                metadata_uri = f"https://ipfs.io/ipfs/QmDemo{upload_id.replace('-', '')[:40]}"
+            
+            finally:
+                # Clean up temp file
+                if os.path.exists(temp_file_path):
+                    os.unlink(temp_file_path)
             
             # Convert carbon footprint to wei (assuming 18 decimals for precision)
             # Ensure carbon amount is at least 1 kg CO2 to satisfy contract requirements

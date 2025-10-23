@@ -291,6 +291,7 @@ export default function DashboardPage() {
           <NFTGallery
             walletAddress={walletAddress}
             contractAddress={analytics.sustainability_proof_address}
+            analyticsData={analytics}
           />
         </div>
       )}

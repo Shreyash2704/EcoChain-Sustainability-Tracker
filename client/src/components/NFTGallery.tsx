@@ -5,12 +5,14 @@ import { blockscoutService, type NFT } from '../services/blockscout';
 interface NFTGalleryProps {
   walletAddress: string;
   contractAddress: string;
+  analyticsData?: any;
   className?: string;
 }
 
 export const NFTGallery: React.FC<NFTGalleryProps> = ({
   walletAddress,
   contractAddress,
+  analyticsData,
   className = '',
 }) => {
   const [nfts, setNFTs] = useState<NFT[]>([]);
@@ -20,8 +22,65 @@ export const NFTGallery: React.FC<NFTGalleryProps> = ({
 
   useEffect(() => {
     if (!walletAddress || !contractAddress) return;
-    fetchNFTs();
-  }, [walletAddress, contractAddress]);
+    
+    // Use analytics data if available, otherwise fetch from Blockscout
+    if (analyticsData?.upload_history) {
+      loadNFTsFromAnalytics();
+    } else {
+      fetchNFTs();
+    }
+  }, [walletAddress, contractAddress, analyticsData]);
+
+  const loadNFTsFromAnalytics = () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const nftList: NFT[] = [];
+      
+      // Extract NFTs from upload history
+      analyticsData.upload_history.forEach((upload: any) => {
+        if (upload.blockchain_transactions?.nft_token_id) {
+          nftList.push({
+            tokenId: upload.blockchain_transactions.nft_token_id,
+            name: `Sustainability Proof #${upload.blockchain_transactions.nft_token_id}`,
+            description: `Sustainability proof for ${upload.filename}`,
+            image: '/api/placeholder/300/300', // Placeholder image
+            contractAddress: contractAddress,
+            owner: walletAddress,
+            txHash: upload.blockchain_transactions.nft_tx,
+            explorerUrl: upload.blockchain_transactions.nft_explorer,
+            metadata: {
+              name: `Sustainability Proof #${upload.blockchain_transactions.nft_token_id}`,
+              description: `Sustainability proof for ${upload.filename}`,
+              image: '/api/placeholder/300/300', // Placeholder image
+              attributes: [
+                {
+                  trait_type: "Document Type",
+                  value: upload.analysis?.document_type || "Sustainability Document"
+                },
+                {
+                  trait_type: "Carbon Impact",
+                  value: upload.analysis?.carbon_footprint || "0"
+                },
+                {
+                  trait_type: "Upload Date",
+                  value: upload.upload_timestamp || "Unknown"
+                }
+              ]
+            }
+          });
+        }
+      });
+      
+      setNFTs(nftList);
+    } catch (err) {
+      console.error('Error loading NFTs from analytics:', err);
+      setError('Failed to load NFTs from analytics data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchNFTs = async () => {
     try {
@@ -48,19 +107,29 @@ export const NFTGallery: React.FC<NFTGalleryProps> = ({
   };
 
   const getCarbonImpact = (nft: NFT): string | null => {
-    const carbonAttr = nft.metadata.attributes.find(
-      attr => attr.trait_type.toLowerCase().includes('carbon') || 
-              attr.trait_type.toLowerCase().includes('impact')
-    );
-    return carbonAttr?.value || null;
+    // For NFTs from analytics data, we don't have metadata attributes
+    // Return null or extract from description if available
+    if (nft.metadata?.attributes) {
+      const carbonAttr = nft.metadata.attributes.find(
+        attr => attr.trait_type.toLowerCase().includes('carbon') || 
+                attr.trait_type.toLowerCase().includes('impact')
+      );
+      return carbonAttr?.value || null;
+    }
+    return null;
   };
 
   const getSustainabilityScore = (nft: NFT): number | null => {
-    const scoreAttr = nft.metadata.attributes.find(
-      attr => attr.trait_type.toLowerCase().includes('score') ||
-              attr.trait_type.toLowerCase().includes('sustainability')
-    );
-    return scoreAttr ? parseInt(scoreAttr.value) : null;
+    // For NFTs from analytics data, we don't have metadata attributes
+    // Return null or extract from description if available
+    if (nft.metadata?.attributes) {
+      const scoreAttr = nft.metadata.attributes.find(
+        attr => attr.trait_type.toLowerCase().includes('score') ||
+                attr.trait_type.toLowerCase().includes('sustainability')
+      );
+      return scoreAttr ? parseInt(scoreAttr.value) : null;
+    }
+    return null;
   };
 
   if (loading) {
@@ -100,11 +169,26 @@ export const NFTGallery: React.FC<NFTGalleryProps> = ({
     );
   }
 
+  // Filter out NFTs without proper data
+  const validNFTs = nfts.filter(nft => nft.tokenId && nft.contractAddress);
+  
+  if (validNFTs.length === 0) {
+    return (
+      <div className={`text-center py-8 ${className}`}>
+        <Leaf className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-gray-900 mb-2">No Valid NFTs Found</h3>
+        <p className="text-sm text-gray-600">
+          Your NFTs are still being processed. Please wait a moment and refresh.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className={`space-y-6 ${className}`}>
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">
-          SustainabilityProof NFTs ({nfts.length})
+          SustainabilityProof NFTs ({validNFTs.length})
         </h3>
         <button
           onClick={fetchNFTs}
@@ -115,7 +199,7 @@ export const NFTGallery: React.FC<NFTGalleryProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {nfts.map((nft) => {
+        {validNFTs.map((nft) => {
           const carbonImpact = getCarbonImpact(nft);
           const sustainabilityScore = getSustainabilityScore(nft);
 
@@ -126,10 +210,10 @@ export const NFTGallery: React.FC<NFTGalleryProps> = ({
             >
               {/* NFT Image */}
               <div className="aspect-square bg-gray-100 flex items-center justify-center">
-                {nft.metadata.image ? (
+                {nft.metadata?.image && nft.metadata.image !== '/api/placeholder/300/300' ? (
                   <img
                     src={nft.metadata.image}
-                    alt={nft.metadata.name}
+                    alt={nft.metadata.name || 'NFT'}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
@@ -137,9 +221,9 @@ export const NFTGallery: React.FC<NFTGalleryProps> = ({
                     }}
                   />
                 ) : null}
-                <div className="hidden flex-col items-center justify-center text-gray-400">
+                <div className={`${nft.metadata?.image && nft.metadata.image !== '/api/placeholder/300/300' ? 'hidden' : ''} flex-col items-center justify-center text-gray-400`}>
                   <ImageIcon className="w-8 h-8 mb-2" />
-                  <span className="text-sm">No Image</span>
+                  <span className="text-sm">Sustainability Proof</span>
                 </div>
               </div>
 
@@ -147,7 +231,7 @@ export const NFTGallery: React.FC<NFTGalleryProps> = ({
               <div className="p-4 space-y-3">
                 <div>
                   <h4 className="font-medium text-gray-900 truncate">
-                    {nft.metadata.name}
+                    {nft.metadata?.name || `Sustainability Proof #${nft.tokenId}`}
                   </h4>
                   <p className="text-sm text-gray-600 truncate">
                     Token ID: {nft.tokenId}

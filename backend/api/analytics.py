@@ -145,6 +145,7 @@ async def get_user_analytics(user_wallet: str):
                 "success_rate": (successful_uploads / total_uploads * 100) if total_uploads > 0 else 0
             },
             "upload_history": upload_history,
+            "sustainability_proof_address": "0x17874E9d6e22bf8025Fe7473684e50f36472CCd2",
             "generated_at": datetime.utcnow().isoformat()
         }
         
