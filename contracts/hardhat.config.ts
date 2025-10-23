@@ -2,7 +2,13 @@ import type { HardhatUserConfig } from "hardhat/config";
 import * as dotenv from "dotenv";
 
 import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
+import "hardhat-gas-reporter";
 import { configVariable } from "hardhat/config";
+
+// Import custom tasks
+import "./tasks/mint-tokens";
+import "./tasks/mint-nft";
+import "./tasks/register-proof";
 
 // Load environment variables
 dotenv.config();
