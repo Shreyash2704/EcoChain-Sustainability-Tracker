@@ -37,7 +37,10 @@ class IntentClassification(Model):
 user_agent = Agent(
     name="user_agent",
     port=8005,
-    seed="user_agent_seed_phrase_for_ecochain_sustainability_tracker"
+    seed="user_agent_seed_phrase_for_ecochain_sustainability_tracker",
+    mailbox=True,
+    publish_agent_details=True,
+    readme_path="AGENT_README.md"
 )
 
 # Agentverse metadata for agent discovery

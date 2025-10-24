@@ -9,7 +9,10 @@ from datetime import datetime
 reasoner_agent = Agent(
     name="EcoChain ReasonerAgent",
     seed="eco_reasoner_agent_seed",
-    port=8003
+    port=8003,
+    mailbox=True,
+    publish_agent_details=True,
+    readme_path="AGENT_README.md"
 )
 
 # Agentverse metadata for agent discovery

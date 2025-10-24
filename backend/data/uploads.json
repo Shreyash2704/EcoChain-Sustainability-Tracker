@@ -3919,5 +3919,41 @@
       "proof_registry_tx": "0x09d9bff07a8efb3246acca90e86408f9dfc933e38e6652397832ca987e0ab0e4",
       "proof_id": "proof_aa24f890-f81b-4033-8b10-8c28d9a55c39"
     }
+  },
+  "dd93a094-5756-49ed-8989-6f1217266a01": {
+    "upload_id": "dd93a094-5756-49ed-8989-6f1217266a01",
+    "filename": "sample_carbon_report.json",
+    "content_type": "application/json",
+    "upload_type": "sustainability_document",
+    "user_wallet": "0x235A0A76b3dE9E4A8D8a7CDE2E6BEB8f1515157B",
+    "metadata": null,
+    "status": "completed",
+    "created_at": "2025-10-24T08:17:01.914716",
+    "file_size": 855,
+    "cid": "Qm955355ed9d08070cfff1426abc4fd0bc9463ef2445f4",
+    "gateway_url": "https://ipfs.io/ipfs/Qm955355ed9d08070cfff1426abc4fd0bc9463ef2445f4",
+    "completed_at": "2025-10-24T08:17:02.821263",
+    "analysis_result": {
+      "should_mint": false,
+      "token_amount": 0,
+      "carbon_footprint": 320.8,
+      "reasoning": "MeTTa analysis completed",
+      "impact_score": 0,
+      "metta_analysis": {
+        "analysis_type": "sustainability_document",
+        "sustainability_metrics": {
+          "carbon_footprint": 320.8,
+          "energy_consumption": 4500,
+          "waste_reduction": 28.5,
+          "renewable_energy_percentage": 65.0
+        },
+        "method": "mock_analysis",
+        "timestamp": "2025-10-24T08:17:05.231211",
+        "note": "MeTTa not available, using mock analysis"
+      }
+    },
+    "should_mint": false,
+    "token_amount": 0,
+    "reasoning": "MeTTa analysis completed"
   }
 }

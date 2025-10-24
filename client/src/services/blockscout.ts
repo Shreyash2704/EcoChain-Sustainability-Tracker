@@ -256,10 +256,6 @@ class BlockscoutService {
     })) || [];
   }
 
-  private formatTokenAmount(amount: string, decimals: number): string {
-    const value = parseFloat(amount) / Math.pow(10, decimals);
-    return value.toFixed(6);
-  }
 }
 
 // Default configuration for EcoChain

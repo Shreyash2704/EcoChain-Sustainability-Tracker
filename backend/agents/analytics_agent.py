@@ -30,7 +30,10 @@ class AnalyticsResponse(Model):
 analytics_agent = Agent(
     name="analytics_agent",
     port=8006,
-    seed="analytics_agent_seed_phrase_for_ecochain_sustainability_tracker"
+    seed="analytics_agent_seed_phrase_for_ecochain_sustainability_tracker",
+    mailbox=True,
+    publish_agent_details=True,
+    readme_path="AGENT_README.md"
 )
 
 # Agentverse metadata for agent discovery
@@ -100,7 +103,7 @@ async def handle_analytics_request(ctx: Context, sender: str, msg: AnalyticsRequ
 async def get_user_analytics(wallet_address: str) -> Dict[str, Any]:
     """
     Get user analytics data from the analytics API
-    """
+    """a
     try:
         import aiohttp
         

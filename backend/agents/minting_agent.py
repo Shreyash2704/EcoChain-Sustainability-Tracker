@@ -17,7 +17,10 @@ from core.logging import get_logger
 minting_agent = Agent(
     name="EcoChain MintingAgent",
     seed="eco_minting_agent_seed",
-    port=8004
+    port=8004,
+    mailbox=True,
+    publish_agent_details=True,
+    readme_path="AGENT_README.md"
 )
 
 # Agentverse metadata for agent discovery

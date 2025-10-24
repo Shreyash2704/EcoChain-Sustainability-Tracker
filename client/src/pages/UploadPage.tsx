@@ -2,6 +2,8 @@ import { useState, useCallback } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useUploadFile } from '../hooks/useApi';
 import TransactionStatus from '../components/TransactionStatus';
+import SampleDocuments from '../components/SampleDocuments';
+import JSONTemplateGenerator from '../components/JSONTemplateGenerator';
 import { 
   Upload, 
   CheckCircle, 
@@ -191,6 +193,29 @@ export default function UploadPage() {
           )}
         </div>
       </div>
+
+      {/* File Reading Notice */}
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <div className="flex items-start space-x-3">
+          <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+          <div>
+            <h3 className="text-sm font-medium text-amber-800 mb-1">
+              File Reading Functionality Notice
+            </h3>
+            <p className="text-sm text-amber-700">
+              <strong>Important:</strong> File reading functionality is not yet implemented in this version. 
+              Please use the sample JSON documents provided below to test the system. 
+              This feature will be added in the next development phase.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Sample Documents */}
+      <SampleDocuments />
+
+      {/* JSON Template Generator */}
+      <JSONTemplateGenerator />
 
       {/* Upload Result */}
       {uploadResult && (

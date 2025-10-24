@@ -42,15 +42,13 @@ export const NFTGallery: React.FC<NFTGalleryProps> = ({
       analyticsData.upload_history.forEach((upload: any) => {
         if (upload.blockchain_transactions?.nft_token_id) {
           nftList.push({
-            tokenId: upload.blockchain_transactions.nft_token_id,
-            name: `Sustainability Proof #${upload.blockchain_transactions.nft_token_id}`,
-            description: `Sustainability proof for ${upload.filename}`,
-            image: '/api/placeholder/300/300', // Placeholder image
             contractAddress: contractAddress,
+            tokenId: upload.blockchain_transactions.nft_token_id,
             owner: walletAddress,
-            txHash: upload.blockchain_transactions.nft_tx,
-            explorerUrl: upload.blockchain_transactions.nft_explorer,
+            transactionHash: upload.blockchain_transactions.nft_tx,
+            blockNumber: upload.blockchain_transactions.nft_block_number || 0,
             metadata: {
+              tokenId: upload.blockchain_transactions.nft_token_id,
               name: `Sustainability Proof #${upload.blockchain_transactions.nft_token_id}`,
               description: `Sustainability proof for ${upload.filename}`,
               image: '/api/placeholder/300/300', // Placeholder image
