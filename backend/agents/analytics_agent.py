@@ -103,7 +103,7 @@ async def handle_analytics_request(ctx: Context, sender: str, msg: AnalyticsRequ
 async def get_user_analytics(wallet_address: str) -> Dict[str, Any]:
     """
     Get user analytics data from the analytics API
-    """a
+    """
     try:
         import aiohttp
         

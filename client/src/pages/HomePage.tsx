@@ -73,9 +73,9 @@ export default function HomePage() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           {authenticated ? (
             <>
-              <Link to="/upload" className="btn-primary text-lg px-8 py-3">
+              <Link to="/upload" className="btn-primary flex align-items-center text-lg px-8 py-3">
                 Upload Document
-                <ArrowRight className="w-5 h-5 ml-2" />
+                {/* <ArrowRight className="w-5 h-5 ml-2" /> */}
               </Link>
               <Link to="/dashboard" className="btn-secondary text-lg px-8 py-3">
                 View Dashboard
@@ -191,7 +191,7 @@ export default function HomePage() {
         </p>
         <Link to="/upload" className="btn-primary text-lg px-8 py-3 bg-eco-600 hover:bg-eco-700">
           Get Started Now
-          <ArrowRight className="w-5 h-5 ml-2" />
+          {/* <ArrowRight className="w-5 h-5 ml-2" /> */}
         </Link>
       </div>
     </div>

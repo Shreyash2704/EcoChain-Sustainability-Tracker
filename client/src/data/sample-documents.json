@@ -1,0 +1,105 @@
+{
+  "sustainability_document": {
+    "name": "Corporate Sustainability Report",
+    "description": "Annual sustainability report with comprehensive environmental metrics",
+    "sustainability_metrics": {
+      "carbon_footprint": 150.5,
+      "energy_consumption": 2500,
+      "waste_reduction": 15.2,
+      "renewable_energy_percentage": 85.0,
+      "water_usage": 1200,
+      "recycling_rate": 78.5
+    },
+    "document_type": "sustainability_document",
+    "organization": "EcoCorp Inc.",
+    "reporting_period": "2024",
+    "certifications": ["ISO 14001", "LEED Gold"],
+    "goals_achieved": [
+      "25% reduction in carbon emissions",
+      "40% increase in renewable energy usage",
+      "Zero waste to landfill"
+    ]
+  },
+  "carbon_report": {
+    "name": "Carbon Footprint Assessment",
+    "description": "Detailed carbon footprint analysis for manufacturing operations",
+    "sustainability_metrics": {
+      "carbon_footprint": 320.8,
+      "energy_consumption": 4500,
+      "waste_reduction": 22.1,
+      "renewable_energy_percentage": 92.0,
+      "scope_1_emissions": 180.2,
+      "scope_2_emissions": 140.6,
+      "scope_3_emissions": 85.4
+    },
+    "document_type": "carbon_report",
+    "organization": "Green Manufacturing Ltd.",
+    "reporting_period": "Q4 2024",
+    "methodology": "GHG Protocol",
+    "verification": "Third-party verified"
+  },
+  "energy_audit": {
+    "name": "Energy Efficiency Audit",
+    "description": "Comprehensive energy audit with efficiency recommendations",
+    "sustainability_metrics": {
+      "carbon_footprint": 95.3,
+      "energy_consumption": 1800,
+      "waste_reduction": 8.7,
+      "renewable_energy_percentage": 65.0,
+      "energy_savings": 25.5,
+      "efficiency_improvements": 18.2
+    },
+    "document_type": "energy_audit",
+    "organization": "Energy Solutions Co.",
+    "reporting_period": "2024",
+    "audit_scope": "Building energy systems",
+    "recommendations": [
+      "LED lighting upgrade",
+      "HVAC optimization",
+      "Smart metering implementation"
+    ]
+  },
+  "waste_management": {
+    "name": "Waste Management Report",
+    "description": "Comprehensive waste reduction and recycling program results",
+    "sustainability_metrics": {
+      "carbon_footprint": 45.2,
+      "energy_consumption": 800,
+      "waste_reduction": 35.8,
+      "renewable_energy_percentage": 45.0,
+      "waste_diverted": 85.2,
+      "recycling_rate": 92.5
+    },
+    "document_type": "waste_management",
+    "organization": "Waste Solutions Inc.",
+    "reporting_period": "2024",
+    "programs": [
+      "Composting initiative",
+      "Electronic waste recycling",
+      "Paper reduction program"
+    ]
+  },
+  "green_certification": {
+    "name": "Green Building Certification",
+    "description": "LEED Platinum certification for sustainable building design",
+    "sustainability_metrics": {
+      "carbon_footprint": 25.1,
+      "energy_consumption": 1200,
+      "waste_reduction": 45.3,
+      "renewable_energy_percentage": 100.0,
+      "water_efficiency": 95.0,
+      "indoor_air_quality": 98.5
+    },
+    "document_type": "green_certification",
+    "organization": "Sustainable Architecture Group",
+    "reporting_period": "2024",
+    "certification": "LEED Platinum",
+    "score": 95,
+    "features": [
+      "Solar panel installation",
+      "Rainwater harvesting",
+      "Green roof system",
+      "Energy-efficient HVAC"
+    ]
+  }
+}
