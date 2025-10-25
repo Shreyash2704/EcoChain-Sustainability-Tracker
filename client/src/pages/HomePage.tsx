@@ -6,7 +6,6 @@ import {
   Upload, 
   BarChart3, 
   Trophy,
-  ArrowRight,
   CheckCircle,
   Zap,
   Shield,

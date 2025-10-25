@@ -469,9 +469,12 @@ async def process_file_upload(file_content: bytes, filename: str, wallet_address
         data.add_field('upload_type', 'sustainability_document')  # Required field
         
         # Call the upload API
+        from core.config import get_settings
+        settings = get_settings()
+        
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                "http://localhost:8002/upload/",
+                f"{settings.upload_url}/upload/",
                 data=data,
                 timeout=aiohttp.ClientTimeout(total=120)  # 2 minutes for processing
             ) as response:

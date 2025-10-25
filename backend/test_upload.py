@@ -8,7 +8,8 @@ import time
 from pathlib import Path
 
 # Configuration
-BASE_URL = "http://localhost:8002"
+import os
+BASE_URL = os.getenv("BACKEND_URL", "http://localhost:8002")
 UPLOAD_URL = f"{BASE_URL}/upload"
 
 def create_test_file():

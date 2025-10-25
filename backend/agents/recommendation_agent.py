@@ -87,10 +87,12 @@ async def get_user_analytics(wallet_address: str) -> Optional[Dict[str, Any]]:
     """
     try:
         import aiohttp
+        from core.config import get_settings
         
+        settings = get_settings()
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                f"http://localhost:8002/analytics/user/{wallet_address}",
+                f"{settings.analytics_url}/analytics/user/{wallet_address}",
                 timeout=aiohttp.ClientTimeout(total=10)
             ) as response:
                 if response.status == 200:
@@ -152,9 +154,12 @@ async def get_metta_recommendations(message: str, focus_area: Optional[str]) -> 
             "type": "recommendations"
         }
         
+        from core.config import get_settings
+        settings = get_settings()
+        
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                "http://localhost:8003/api/query",
+                f"{settings.reasoner_agent_url}/api/query",
                 json=query_data,
                 timeout=aiohttp.ClientTimeout(total=30)
             ) as response:

@@ -4557,5 +4557,77 @@
       "proof_registry_tx": "0xea68e3f86cdfeeaace33c89af82a12b16611fb09b0015ce2b00ae787913eb929",
       "proof_id": "proof_f88eb3a5-db6f-4797-848c-38b3a71695be"
     }
+  },
+  "32ada703-bd76-4c2f-8138-5d1122200b81": {
+    "upload_id": "32ada703-bd76-4c2f-8138-5d1122200b81",
+    "filename": "sustainability-report.json",
+    "content_type": "application/json",
+    "upload_type": "sustainability_document",
+    "user_wallet": "0xc90E6B2dD249C97D4408270a8bfD04d383A7c663",
+    "metadata": null,
+    "status": "completed",
+    "created_at": "2025-10-25T19:55:52.597862",
+    "file_size": 951,
+    "cid": "Qmbdface7045a699c6e67f81f4e6b93899f719947338a7",
+    "gateway_url": "https://ipfs.io/ipfs/Qmbdface7045a699c6e67f81f4e6b93899f719947338a7",
+    "completed_at": "2025-10-25T19:55:53.989305",
+    "analysis_result": {
+      "should_mint": true,
+      "token_amount": 10.0,
+      "carbon_footprint": 0,
+      "reasoning": "MeTTa rule-based analysis: Carbon credits: 15.1, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.0",
+      "impact_score": 15.05,
+      "metta_analysis": {
+        "impact_score": 15.05,
+        "token_amount": 10.0,
+        "should_mint": true,
+        "sustainability_level": "insufficient",
+        "environmental_impact": "low",
+        "recommendation": "Insufficient data or impact. Please provide more detailed sustainability information.",
+        "reasoning": "MeTTa rule-based analysis: Carbon credits: 15.1, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.0",
+        "carbon_credits": 15.05,
+        "waste_bonus": 0.0,
+        "renewable_bonus": 0.0,
+        "document_multiplier": 1.0,
+        "method": "metta_docker",
+        "timestamp": "2025-10-25T19:55:54.324071"
+      }
+    },
+    "should_mint": true,
+    "token_amount": 10.0,
+    "reasoning": "MeTTa rule-based analysis: Carbon credits: 15.1, Waste bonus: 0.0, Renewable bonus: 0.0, Document multiplier: 1.0",
+    "minting_results": {
+      "eco_tokens": {
+        "success": true,
+        "tx_hash": "0x97b32b94678db455185c05baa4295ed02c125eb23fc528043fb1e256d309bc39",
+        "amount": 10.0,
+        "amount_wei": 10000000000000000000,
+        "block_number": 9489367,
+        "gas_used": 207517
+      },
+      "sustainability_nft": {
+        "success": true,
+        "tx_hash": "0x1dbc7e88358fcb7795b6ccac5c24efb67afb6c644432d17df0f2de5ec2166647",
+        "token_id": 48,
+        "proof_type": "sustainability_document",
+        "carbon_amount": 1.0,
+        "metadata_uri": "https://ipfs.io/ipfs/QmDemo32ada703bd764c2f81385d1122200b81",
+        "block_number": 9489368,
+        "gas_used": 396302
+      },
+      "proof_registry": {
+        "success": true,
+        "tx_hash": "0xd7c1ec4fb95c24215faa91d0a6622abd7079f081bff31aa1aafcd9a80fb48f04",
+        "proof_id": "proof_32ada703-bd76-4c2f-8138-5d1122200b81",
+        "block_number": 9489369
+      }
+    },
+    "transaction_details": {
+      "eco_token_tx": "0x97b32b94678db455185c05baa4295ed02c125eb23fc528043fb1e256d309bc39",
+      "nft_tx": "0x1dbc7e88358fcb7795b6ccac5c24efb67afb6c644432d17df0f2de5ec2166647",
+      "nft_token_id": 48,
+      "proof_registry_tx": "0xd7c1ec4fb95c24215faa91d0a6622abd7079f081bff31aa1aafcd9a80fb48f04",
+      "proof_id": "proof_32ada703-bd76-4c2f-8138-5d1122200b81"
+    }
   }
 }

@@ -1,0 +1,26 @@
+# MeTTa Service Requirements
+# Optimized for Docker builds to avoid NumPy compilation issues
+
+# Core dependencies
+numpy==1.24.3
+scipy==1.10.1
+pandas==2.0.3
+
+# MeTTa framework
+metta==2.1.0
+
+# Web framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# HTTP client
+requests==2.31.0
+aiohttp==3.9.1
+aiofiles==23.2.1
+
+# Data processing
+pydantic==2.5.0
+python-multipart==0.0.6
+
+# Utilities
+python-dotenv==1.0.0

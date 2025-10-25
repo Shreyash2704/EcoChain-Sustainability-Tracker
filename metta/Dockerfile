@@ -1,45 +1,45 @@
-# MeTTa Docker Container for Sustainability Analysis
-FROM python:3.11-slim
+# MeTTa Service Dockerfile
+FROM python:3.10-slim
 
 # Set working directory
 WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
     curl \
-    git \
+    wget \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install only essential dependencies (no MeTTa package)
-RUN pip install --no-cache-dir \
-    fastapi \
-    uvicorn \
-    aiohttp \
-    pydantic \
-    python-multipart
+# Upgrade pip and install build tools
+RUN pip install --upgrade pip setuptools wheel
 
-# Create directories
-RUN mkdir -p /app/knowledge /app/data /app/api
+# Copy requirements first for better caching
+COPY requirements-simple.txt .
 
-# Copy MeTTa knowledge base
-COPY knowledge/ /app/knowledge/
-COPY api/ /app/api/
+# Install dependencies from requirements file
+RUN pip install --no-cache-dir -r requirements-simple.txt
 
-# Copy main MeTTa script
-COPY sustainability.metta /app/
-COPY run_metta.py /app/
+# Copy MeTTa service code
+COPY . .
 
-# Set environment variables
-ENV PYTHONPATH=/app
-ENV METTA_PORT=8080
-ENV METTA_HOST=0.0.0.0
+# Create data and knowledge directories
+RUN mkdir -p /app/data /app/knowledge
+
+# Create non-root user
+RUN useradd -m -u 1000 metta && chown -R metta:metta /app
+USER metta
 
 # Expose port
-EXPOSE 8080
+EXPOSE 8007
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8080/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8007/health || exit 1
 
-# Run MeTTa service
+# Start MeTTa service
 CMD ["python", "run_metta.py"]

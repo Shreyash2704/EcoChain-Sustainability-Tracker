@@ -260,7 +260,7 @@ class BlockscoutService {
 
 // Default configuration for EcoChain
 const defaultConfig: BlockscoutConfig = {
-  baseUrl: 'http://localhost:8002/api/blockscout', // Backend proxy to avoid CORS
+  baseUrl: import.meta.env.VITE_BLOCKSCOUT_PROXY_URL || 'http://localhost:8002/api/blockscout', // Backend proxy to avoid CORS
   chainId: 11155111,
 };
 

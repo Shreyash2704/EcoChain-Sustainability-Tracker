@@ -69,6 +69,74 @@ class Settings(BaseSettings):
     # Database Configuration
     database_url: Optional[str] = Field(default=None, env="DATABASE_URL")
     
+    # Environment Detection
+    is_dev: bool = Field(default=True, env="DEV")
+    dev_base_url: str = Field(default="http://localhost:8002", env="DEV_URL")
+    prod_base_url: str = Field(default="https://api.ecochain.app", env="PROD_URL")
+    
+    # Base URL (automatically determined by environment)
+    @property
+    def base_url(self) -> str:
+        """Get base URL based on environment"""
+        return self.dev_base_url if self.is_dev else self.prod_base_url
+    
+    # Deployment URLs (automatically configured)
+    @property
+    def backend_url(self) -> str:
+        """Backend service URL"""
+        return f"{self.base_url}"
+    
+    @property
+    def metta_service_url(self) -> str:
+        """MeTTa service URL"""
+        if self.is_dev:
+            return "http://localhost:8007"
+        else:
+            return f"{self.prod_base_url.replace('api', 'metta')}"
+    
+    @property
+    def analytics_url(self) -> str:
+        """Analytics service URL"""
+        return f"{self.base_url}"
+    
+    @property
+    def upload_url(self) -> str:
+        """Upload service URL"""
+        return f"{self.base_url}"
+    
+    # Agent URLs (automatically configured)
+    @property
+    def user_agent_url(self) -> str:
+        """User agent URL"""
+        if self.is_dev:
+            return "http://localhost:8005"
+        else:
+            return f"{self.prod_base_url.replace('api', 'user-agent')}"
+    
+    @property
+    def analytics_agent_url(self) -> str:
+        """Analytics agent URL"""
+        if self.is_dev:
+            return "http://localhost:8006"
+        else:
+            return f"{self.prod_base_url.replace('api', 'analytics-agent')}"
+    
+    @property
+    def reasoner_agent_url(self) -> str:
+        """Reasoner agent URL"""
+        if self.is_dev:
+            return "http://localhost:8003"
+        else:
+            return f"{self.prod_base_url.replace('api', 'reasoner-agent')}"
+    
+    @property
+    def minting_agent_url(self) -> str:
+        """Minting agent URL"""
+        if self.is_dev:
+            return "http://localhost:8004"
+        else:
+            return f"{self.prod_base_url.replace('api', 'minting-agent')}"
+    
     # CORS Configuration
     cors_origins: list[str] = Field(default=["*"], env="CORS_ORIGINS")
     

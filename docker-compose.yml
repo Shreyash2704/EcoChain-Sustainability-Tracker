@@ -1,35 +1,194 @@
-version: '3.8'
+# docker-compose.yml
+# EcoChain Optimized Docker Compose (Fixes NumPy Issues)
+
 
 services:
-  metta:
-    build: ./metta
+  # ==================== BACKEND SERVICE ====================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ecochain-backend
     ports:
-      - "8080:8080"
+      - "8002:8002"
     volumes:
-      - ./metta/knowledge:/app/knowledge
-      - ./metta/data:/app/data
+      - ./backend/data:/app/data  # Persist JSON data files
+      - backend_logs:/app/logs
     environment:
-      - METTA_PORT=8080
-      - METTA_HOST=0.0.0.0
+      - DEV=true
+      - DEV_URL=http://backend:8002
+      - PROD_URL=https://api.ecochain.app
+      - SEPOLIA_RPC_URL=${SEPOLIA_RPC_URL}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - LIGHTHOUSE_API_KEY=${LIGHTHOUSE_API_KEY}
+      - AGENTVERSE_API_KEY=${AGENTVERSE_API_KEY}
+      - SECRET_KEY=${SECRET_KEY}
+      - ENVIRONMENT=production
+    networks:
+      - ecochain-network
     restart: unless-stopped
+    mem_limit: 1g
+    memswap_limit: 1g
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+    depends_on:
+      - metta-service
 
-  # Optional: Add a database for MeTTa knowledge persistence
-  # postgres:
-  #   image: postgres:15
-  #   environment:
-  #     POSTGRES_DB: metta
-  #     POSTGRES_USER: metta
-  #     POSTGRES_PASSWORD: metta_password
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
+  # ==================== AI SERVICES ====================
+  metta-service:
+    build:
+      context: ./metta
+      dockerfile: Dockerfile
+    container_name: ecochain-metta
+    ports:
+      - "8007:8007"
+    networks:
+      - ecochain-network
+    restart: unless-stopped
+    mem_limit: 1g
+    memswap_limit: 1g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-# volumes:
-#   postgres_data:
+  # ==================== AI AGENTS ====================
+  user-agent:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.agent
+    container_name: ecochain-user-agent
+    ports:
+      - "8005:8005"
+    volumes:
+      - ./backend/data:/app/data  # Persist JSON data files
+    environment:
+      - DEV=true
+      - DEV_URL=http://backend:8002
+      - PROD_URL=https://api.ecochain.app
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - AGENTVERSE_API_KEY=${AGENTVERSE_API_KEY}
+      - ENVIRONMENT=production
+    networks:
+      - ecochain-network
+    restart: unless-stopped
+
+  reasoner-agent:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.agent
+    container_name: ecochain-reasoner-agent
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./backend/data:/app/data  # Persist JSON data files
+    environment:
+      - DEV=true
+      - DEV_URL=http://backend:8002
+      - PROD_URL=https://api.ecochain.app
+      - METTA_SERVICE_URL=http://metta-service:8007
+      - ENVIRONMENT=production
+    networks:
+      - ecochain-network
+    restart: unless-stopped
+    depends_on:
+      - metta-service
+
+  minting-agent:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.agent
+    container_name: ecochain-minting-agent
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./backend/data:/app/data  # Persist JSON data files
+    environment:
+      - DEV=true
+      - DEV_URL=http://backend:8002
+      - PROD_URL=https://api.ecochain.app
+      - SEPOLIA_RPC_URL=${SEPOLIA_RPC_URL}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - LIGHTHOUSE_API_KEY=${LIGHTHOUSE_API_KEY}
+      - ENVIRONMENT=production
+    networks:
+      - ecochain-network
+    restart: unless-stopped
+
+  analytics-agent:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.agent
+    container_name: ecochain-analytics-agent
+    ports:
+      - "8006:8006"
+    volumes:
+      - ./backend/data:/app/data  # Persist JSON data files
+    environment:
+      - DEV=true
+      - DEV_URL=http://backend:8002
+      - PROD_URL=https://api.ecochain.app
+      - SEPOLIA_RPC_URL=${SEPOLIA_RPC_URL}
+      - ENVIRONMENT=production
+    networks:
+      - ecochain-network
+    restart: unless-stopped
+
+  # ==================== FRONTEND SERVICE ====================
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: ecochain-frontend
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_BASE_URL=http://backend:8002
+      - VITE_BLOCKSCOUT_PROXY_URL=http://backend:8002/api/blockscout
+      - REACT_APP_API_URL=http://backend:8002
+      - REACT_APP_ENVIRONMENT=production
+    networks:
+      - ecochain-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ==================== REVERSE PROXY (NGINX) ====================
+  nginx:
+    image: nginx:stable-alpine
+    container_name: ecochain-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/certs:/etc/nginx/certs:ro # For SSL certificates
+    networks:
+      - ecochain-network
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - backend
+      - metta-service
+      - user-agent
+      - reasoner-agent
+      - minting-agent
+      - analytics-agent
+
+# ==================== VOLUMES ====================
+volumes:
+  backend_logs:
+
+# ==================== NETWORKS ====================
+networks:
+  ecochain-network:
+    driver: bridge

@@ -106,13 +106,15 @@ async def get_user_analytics(wallet_address: str) -> Dict[str, Any]:
     """
     try:
         import aiohttp
+        from core.config import get_settings
         
+        settings = get_settings()
         print(f"🔍 DEBUG: get_user_analytics - Calling API for wallet: {wallet_address}")
         
-        # Call the analytics API
+        # Call the analytics API using configured URL
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                f"http://localhost:8002/analytics/user/{wallet_address}",
+                f"{settings.analytics_url}/analytics/user/{wallet_address}",
                 timeout=aiohttp.ClientTimeout(total=30)
             ) as response:
                 print(f"🔍 DEBUG: get_user_analytics - API response status: {response.status}")
