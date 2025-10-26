@@ -15,9 +15,9 @@ services:
       - ./backend/data:/app/data  # Persist JSON data files
       - backend_logs:/app/logs
     environment:
-      - DEV=true
+      - DEV=false
       - DEV_URL=http://backend:8002
-      - PROD_URL=https://api.ecochain.app
+      - PROD_URL=https://ecochain-dev.dev
       - SEPOLIA_RPC_URL=${SEPOLIA_RPC_URL}
       - PRIVATE_KEY=${PRIVATE_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -68,9 +68,9 @@ services:
     volumes:
       - ./backend/data:/app/data  # Persist JSON data files
     environment:
-      - DEV=true
+      - DEV=false
       - DEV_URL=http://backend:8002
-      - PROD_URL=https://api.ecochain.app
+      - PROD_URL=https://ecochain-dev.dev
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - AGENTVERSE_API_KEY=${AGENTVERSE_API_KEY}
       - ENVIRONMENT=production
@@ -88,9 +88,9 @@ services:
     volumes:
       - ./backend/data:/app/data  # Persist JSON data files
     environment:
-      - DEV=true
+      - DEV=false
       - DEV_URL=http://backend:8002
-      - PROD_URL=https://api.ecochain.app
+      - PROD_URL=https://ecochain-dev.dev
       - METTA_SERVICE_URL=http://metta-service:8007
       - ENVIRONMENT=production
     networks:
@@ -109,9 +109,9 @@ services:
     volumes:
       - ./backend/data:/app/data  # Persist JSON data files
     environment:
-      - DEV=true
+      - DEV=false
       - DEV_URL=http://backend:8002
-      - PROD_URL=https://api.ecochain.app
+      - PROD_URL=https://ecochain-dev.dev
       - SEPOLIA_RPC_URL=${SEPOLIA_RPC_URL}
       - PRIVATE_KEY=${PRIVATE_KEY}
       - LIGHTHOUSE_API_KEY=${LIGHTHOUSE_API_KEY}
