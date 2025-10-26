@@ -43,11 +43,11 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-# Include API routers
-app.include_router(uploads_router)
-app.include_router(analytics_router)
-app.include_router(chat_router)
-app.include_router(blockscout_router)
+# Include API routers with /api prefix
+app.include_router(uploads_router, prefix="/api")
+app.include_router(analytics_router, prefix="/api")
+app.include_router(chat_router, prefix="/api")
+app.include_router(blockscout_router, prefix="/api")
 
 @app.get("/")
 async def root():

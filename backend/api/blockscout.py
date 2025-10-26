@@ -8,7 +8,7 @@ import httpx
 import logging
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/api/blockscout", tags=["blockscout"])
+router = APIRouter(prefix="/blockscout", tags=["blockscout"])
 
 # Blockscout API configuration
 BLOCKSCOUT_BASE_URL = "https://eth-sepolia.blockscout.com"
