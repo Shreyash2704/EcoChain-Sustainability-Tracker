@@ -1,0 +1,42 @@
+# EcoChain Sustainability Tracker - Python Dependencies
+# Tested and working with Python 3.11.7
+
+# Core Framework Dependencies
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+gunicorn>=21.0.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# HTTP and API
+requests>=2.28.0
+httpx>=0.24.0
+
+# Authentication and Security
+PyJWT>=2.6.0
+cryptography>=40.0.0
+
+# File Handling and Storage
+aiofiles>=23.0.0
+
+# Data Processing
+python-multipart>=0.0.5
+
+# Environment and Configuration
+python-dotenv>=1.0.0
+
+# Web3 and Blockchain
+web3>=6.0.0
+eth-account>=0.8.0
+eth-typing>=3.0.0
+
+# uAgents Framework
+uagents>=0.20.0
+
+# Development and Testing (optional)
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+isort>=5.12.0
